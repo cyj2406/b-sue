@@ -1,0 +1,33 @@
+/* ════════════════════════════════════════════════
+   블롭 비서 (BLOB-COMPANION.md) — UI 키트 값만
+   구석: 배경 없이 캐릭터만 노출
+   말풍선: .bs-bubble right / 가운데 개입: .bs-dim + .bs-sheet
+   ════════════════════════════════════════════════ */
+
+/* 구석 블롭 (오른쪽 아래) — 시각 배경 없이 72px 터치 영역은 유지 */
+.corner { position: absolute; right: var(--side); z-index: 15; display: flex; align-items: center; gap: 12px; pointer-events: none; }
+.corner-circle { pointer-events: auto; position: relative; width: 72px; height: 72px;
+  display: flex; align-items: flex-end; justify-content: center; touch-action: none; cursor: grab;
+  transition: transform .45s cubic-bezier(.34,1.56,.64,1); transform-origin: 50% 100%; }
+.corner-circle .blob { margin-bottom: 2px; }
+.corner-circle.dragging { transition: none; cursor: grabbing; }
+.corner-circle.dozing { opacity: .7; }
+.corner .bs-bubble { pointer-events: auto; max-width: 240px; cursor: pointer; transform-origin: 100% 50%; }
+/* 장바구니의 2단 CTA 위에서 말풍선과 캐릭터가 버튼을 가리지 않게 해요. */
+.phone-screen:has(.cart-cta) .corner { bottom: 164px !important; }
+
+/* 졸기 z z z */
+.zzz { position: absolute; right: -2px; top: -14px; font: 700 12px/1 var(--font); color: var(--grey-500); }
+.zzz b, .zzz i { font-style: normal; display: inline-block; animation: zzz 2s ease-in-out infinite; }
+.zzz b { font-size: 14px; animation-delay: .4s; } .zzz i { font-size: 16px; animation-delay: .8s; }
+@keyframes zzz { 0%, 100% { transform: translateY(0); opacity: .3 } 50% { transform: translateY(-6px); opacity: 1 } }
+
+/* 가운데 개입: 구석에서 커지며 날아와 시트 위로 튀어나옴 */
+.center-wrap { position: absolute; inset: 0; z-index: 35; }
+.center-wrap.leaving { animation: kitFadeOut .24s forwards; }
+.center-blob { position: absolute; left: 0; right: 0; display: flex; justify-content: center; z-index: 22; pointer-events: none;
+  animation: growFromCorner .5s cubic-bezier(.34,1.3,.64,1); }
+.center-wrap.leaving .center-blob { animation: backToCorner .24s ease-in forwards; }
+@keyframes growFromCorner { from { transform: translate(120px, 300px) scale(.29); } }
+@keyframes backToCorner { to { transform: translate(120px, 300px) scale(.29); opacity: .4 } }
+@keyframes kitFadeOut { to { opacity: 0 } }

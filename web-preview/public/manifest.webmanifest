@@ -1,0 +1,14 @@
+{
+  "name": "비상수단 전시 체험",
+  "short_name": "비상수단",
+  "description": "사기 전에, 딱 3초 — 졸업전시 체험",
+  "start_url": "/?screen=exhibit",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,17 @@
+/* ════════════════════════════════════════════════
+   글꼴 — 키트(bsue-tokens.css)와 같은 두 글꼴을 public/fonts 에서도 불러와요
+   전시장 와이파이가 끊겨도 글자가 안 바뀌게 (키트의 인터넷 글꼴보다 나중에 불러와서 우선)
+   font-display: swap — 파일(1~2.6MB)을 받는 동안에도 글자를 기본 글꼴로 먼저 보여줘요
+   (없으면 최대 3초 동안 글자가 투명해져서 화면이 멈춘 것처럼 보였어요 · 2026-10-11)
+   ════════════════════════════════════════════════ */
+@font-face { font-family: "Pretendard"; src: url("/fonts/pretendard_regular.ttf"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Pretendard"; src: url("/fonts/pretendard_medium.ttf"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Pretendard"; src: url("/fonts/pretendard_semibold.ttf"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Pretendard"; src: url("/fonts/pretendard_bold.ttf"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Black Han Sans"; src: url("/fonts/black_han_sans_regular.ttf"); font-display: swap; }
+
+/* 영수증 (exhibit/ReceiptPaper.jsx · receipt/receiptImage.js)
+   Galmuri11 Bold — 픽셀 글꼴, 제목 · 지킨 돈 · 방어 번호 (SIL OFL 1.1 · public/fonts/galmuri_LICENSE.txt)
+   Nanum Gothic Coding — 감열지 본문 */
+@font-face { font-family: "Galmuri11"; src: url("/fonts/galmuri11_bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Nanum Gothic Coding"; src: url("/fonts/nanum_gothic_coding_regular.ttf"); font-weight: 400; font-display: swap; }

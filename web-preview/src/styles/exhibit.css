@@ -1,0 +1,225 @@
+/* ════════════════════════════════════════════════
+   전시 모드 (가짜 폰) — 색·글자는 UI 키트(bsue-tokens.css) 값만
+   ════════════════════════════════════════════════ */
+
+/* 전체화면 운영: 당겨서 새로고침·길게 눌러 선택·더블탭 확대 막기 */
+body.exhibit-lock { overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.ex-root { position: absolute; inset: 0; overflow: hidden; font-family: var(--font); color: var(--grey-900); background: var(--grey-900);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+:where(.ex-root button) { font-family: inherit; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ex-root img { -webkit-user-drag: none; pointer-events: none; }
+
+/* ── 시작 화면 (exhibit/ExhibitStart.jsx · 2026-10-11 토스 스타일 목업, 390×844 한 화면) ──
+   수치는 목업 지정값 그대로 (소개 좌 24 · 카드 안쪽 20/8/8 · 행 76 등 — 11장 기본값보다 우선) */
+.xs-screen { position: absolute; inset: 0; background: var(--grey-100); display: flex; flex-direction: column; }
+.xs-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.xs-scroll::-webkit-scrollbar { display: none; }
+.xs-intro { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 8px 20px 0 24px; }
+.xs-intro-text { flex: 1; min-width: 0; }
+.xs-eyebrow { font: 500 14px/20px var(--font); color: var(--ex-text-grey); }
+.xs-title { margin-top: 8px; font: 700 26px/1.38 var(--font); color: var(--grey-900); letter-spacing: -0.01em; }
+.xs-desc { margin-top: 10px; font: 400 16px/24px var(--font); color: var(--ex-text-grey); white-space: nowrap; }
+.xs-pose { flex: none; height: 104px; width: auto; display: block; }
+.xs-card { margin: 28px 20px 0; padding: 20px 8px 8px; border-radius: 20px; background: var(--white); }
+.xs-card-title { padding: 0 16px; margin-bottom: 8px; font: 700 18px/26px var(--font); color: var(--grey-900); }
+.xs-row { width: 100%; height: 76px; display: flex; align-items: center; padding: 0 16px; border-radius: 12px; background: none; text-align: left;
+  color: inherit; transition: background .1s var(--ease); -webkit-tap-highlight-color: transparent; }
+.xs-row:active { background: var(--grey-100); }
+.xs-avatar { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--grey-100); overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+.xs-avatar img { width: 86%; margin-bottom: -2px; }
+.xs-row-text { flex: 1; min-width: 0; margin-left: 16px; display: flex; flex-direction: column; }
+.xs-row-title { font: 600 17px/24px var(--font); color: var(--grey-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xs-row-action { margin-top: 3px; font: 600 15px/20px var(--font); color: var(--ex-orange-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xs-chevron { flex: none; color: var(--grey-400); display: flex; }
+.xs-counter { margin: 12px 20px 0 24px; font: 400 14px/20px var(--font); color: var(--ex-text-grey); }
+/* 하단 버튼: 고정 · 위 20px 은 배경색 그라데이션으로 내용이 자연스럽게 사라짐 */
+.xs-cta { flex: none; position: relative; padding: 0 20px var(--ex-cta-bottom); background: var(--grey-100); }
+.xs-cta::before { content: ""; position: absolute; left: 0; right: 0; top: -20px; height: 20px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(242, 244, 246, 0), var(--grey-100)); }
+
+/* ── 상단 상태바 ── */
+.ex-status { display: flex; justify-content: space-between; align-items: center; height: 28px; padding: 0 20px; font: 600 13px/1 var(--font); }
+.ex-status.on-dark { color: #fff; }
+.ex-status.on-light { color: var(--grey-900); }
+.ex-status-icons { display: inline-flex; gap: 6px; align-items: center; }
+
+/* ── 잠금화면 (reference ④) ── */
+.ex-lock { position: absolute; inset: 0; color: #fff; background: linear-gradient(170deg, #2A3240 0%, #191F28 70%); }
+.ex-lock-time { font: 300 84px/1 var(--font); letter-spacing: -.02em; margin-top: 4px; }
+.ex-lock-notis { margin: 44px 12px 0; display: flex; flex-direction: column; gap: 8px; }
+.ex-lock-foot { position: absolute; bottom: 56px; left: 0; right: 0; text-align: center; }
+.ex-lock-hint { opacity: .7; animation: hintPulse 1.6s ease-in-out infinite; }
+@keyframes hintPulse { 50% { opacity: .35 } }
+.ex-lock-bar { width: 120px; height: 4px; border-radius: 4px; background: #fff; opacity: .6; margin: 24px auto 0; }
+
+/* ── 알림 배너 (reference ④) ── */
+.ex-noti { width: 100%; display: flex; gap: 12px; text-align: left; padding: 14px 16px; border-radius: 22px;
+  background: rgba(255,255,255,.92) !important; color: var(--grey-900); animation: notiDrop .45s cubic-bezier(.34,1.4,.64,1); }
+.ex-noti.floating { position: absolute; top: 8px; left: 12px; right: 12px; width: auto; z-index: 40; box-shadow: var(--shadow-float); }
+.ex-noti.dismissing { animation: notiDismiss .22s ease-in forwards; }
+@keyframes notiDrop { from { transform: translateY(-120%); opacity: 0 } }
+@keyframes notiDismiss { to { transform: translateY(-120%); opacity: 0 } }
+.ex-noti:active { transform: scale(.98); }
+.ex-appicon { flex: none; border-radius: 10px; background: var(--grey-900); color: #fff; font: 700 15px var(--font); text-align: center; }
+.ex-noti-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ex-noti-head { display: flex; justify-content: space-between; }
+
+/* ── 시간 건너뛰기 ── */
+.ex-timeskip { position: absolute; inset: 0; z-index: 45; background: var(--grey-900); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff;
+  opacity: 0; transition: opacity .4s; }
+.ex-timeskip.roll, .ex-timeskip.in { opacity: 1; }
+.ex-timeskip.out { opacity: 0; }
+.ex-timeskip-clock { font: 300 72px/1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.ex-timeskip-sub { margin-top: 12px; font-size: 15px; color: var(--grey-400); }
+
+/* ── 빼꼼 (블롭 층, reference ⑤: 하단 버튼 바로 위 오른쪽 끝) ── */
+.ex-peek { position: absolute; right: 0; bottom: 102px; z-index: 30; display: flex; align-items: center; gap: 0; pointer-events: none;
+  animation: peekIn .45s cubic-bezier(.34,1.4,.64,1), peekOut .3s ease-in 3.7s forwards; }
+@keyframes peekIn { from { transform: translateX(110%) } }
+@keyframes peekOut { to { transform: translateX(110%); opacity: 0 } }
+
+/* 전시 화면 전환 */
+.ex-scene { position: absolute; inset: 0; }
+
+/* ── 대기 화면 말풍선: 회색 (키트 말풍선 모양 + --grey-100) ── */
+.ex-attract-bubble { position: relative; max-width: 320px; padding: 12px 18px; border-radius: 18px; background: var(--grey-100); color: var(--grey-800);
+  font: 600 17px/24px var(--font); word-break: keep-all; white-space: nowrap; }
+.ex-attract-bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--grey-100); border-bottom: 0; }
+
+/* ── 체험 중 힌트 층 (exhibit/HintLayer.jsx) — 터치는 전부 통과 ── */
+.ex-hint-layer { position: absolute; inset: 0; z-index: 45; pointer-events: none; }
+.ex-hint-line { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 2px); text-align: center;
+  font: 500 13px/18px var(--font); color: var(--grey-500); }
+.ex-hint-line .num { color: var(--ex-orange-text, var(--orange-600)); font-weight: 700; margin-right: 8px; }
+/* 잠금화면: 기존 "알림을 눌러봐" 자리 (홈 바 위) · 어두운 바탕 */
+.ex-hint-line.on-dark { bottom: 82px; color: rgba(255, 255, 255, .7); font-size: 14px; }
+.ex-hint-line.on-dark .num { color: var(--orange-400); }
+.ex-hint-ring { position: absolute; border: 2px solid var(--orange-500); box-sizing: border-box; }
+
+/* ── 화면 영수증 전환: 0.2초 (exhibit/ScreenReceipt.jsx) ──
+   2초 뒤 settled: 움직임이 멈췄거나 늦어도 무조건 보이게 */
+.ex-receipt-in { animation: exReceiptIn .2s var(--ease) both; }
+@keyframes exReceiptIn { from { opacity: 0; transform: translateY(12px) } }
+.ex-receipt.settled .ex-receipt-in { animation: none; opacity: 1; transform: none; }
+
+/* ── 영수증 종이 (exhibit/ReceiptPaper.jsx) — Galmuri 픽셀 스타일 · 종이는 키트 --cream ──
+   위아래 톱니: 12px마다 높이 6px 삼각형 (mask) */
+.rc-paper { position: relative; width: 300px; flex: none; background: var(--cream); color: #1d1d1d; padding: 32px 20px 32px;
+  --tooth-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 6L6 0L12 6Z'/%3E%3C/svg%3E");
+  --tooth-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 0L6 6L12 0Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--tooth-top), linear-gradient(#000, #000), var(--tooth-bottom);
+          mask-image: var(--tooth-top), linear-gradient(#000, #000), var(--tooth-bottom);
+  -webkit-mask-position: 0 0, 0 6px, 0 100%;  mask-position: 0 0, 0 6px, 0 100%;
+  -webkit-mask-size: 12px 6px, 100% calc(100% - 12px), 12px 6px;  mask-size: 12px 6px, 100% calc(100% - 12px), 12px 6px;
+  -webkit-mask-repeat: repeat-x, no-repeat, repeat-x;  mask-repeat: repeat-x, no-repeat, repeat-x; }
+.rc-paper .rc-title { font: 700 41px/1.1 "Galmuri11", var(--font); text-align: center; letter-spacing: 0; }
+.rc-paper .rc-sub { font: 400 13px/20px "Nanum Gothic Coding", monospace; color: #666666; }
+.rc-paper .rc-body { font: 400 14px/20px "Nanum Gothic Coding", monospace; }
+.rc-paper .rc-mid { font: 700 15px/22px "Galmuri11", var(--font); }
+.rc-paper .rc-big { font: 700 22px/30px "Galmuri11", var(--font); margin-top: 2px; }
+.rc-paper .rc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rc-paper .rc-gap { margin-top: 16px; }
+.rc-paper .rc-center { text-align: center; }
+.rc-paper .rc-right { text-align: right; }
+.rc-paper .rc-qty { display: inline-block; width: 36px; }
+.rc-paper .rc-indent { padding-left: 36px; margin-top: 2px; }
+.rc-paper .rc-indent2 { padding-left: 44px; }
+.rc-paper .rc-dash { border-top: 1px dashed #9a9a9a; margin: 10px 0; }
+
+/* ════════════════════════════════════════════════
+   전시 모드 화면 규칙 (DESIGN.md 11장) — 값은 exhibit/exhibitTokens.js 의 --ex-* 변수
+   키트 파일은 그대로 두고, 전시 화면(.ex-root) 안에서만 덮어써요
+   ════════════════════════════════════════════════ */
+/* 카드: 안쪽 24 · 사이 12 · 둥글기 20 */
+.ex-root .bs-card { padding: var(--ex-card-pad); margin-bottom: var(--ex-card-gap); border-radius: var(--ex-card-radius); }
+/* 버튼: 높이 56 · 둥글기 16 · 두 개면 1:2, 사이 8 */
+.ex-root .bs-btn.primary, .ex-root .bs-btn.secondary:not(.cart-cta .secondary) { height: var(--ex-btn-h); border-radius: var(--ex-btn-radius); }
+.ex-root .bs-btn-row { gap: var(--ex-btn-gap); }
+/* 보조 버튼: 회색 배경 위에선 #E5E8EB + 진한 회색 (흰 버튼 금지) */
+.ex-root .bs-btn.secondary.on-grey { background: var(--ex-secondary-bg); color: var(--ex-secondary-text); }
+/* 하단 버튼 영역: 위 12 · 좌우 20 · 아래 홈 바 + 16 (최소 34) */
+.ex-root .bs-cta, .ex-root .ex-cta { padding: var(--ex-cta-top) var(--ex-cta-side) var(--ex-cta-bottom); }
+.ex-root .ex-cta { position: absolute; left: 0; right: 0; bottom: 0; }
+.ex-root .bs-sheet { padding-bottom: var(--ex-cta-bottom); }
+.ex-root .lvl-cta { bottom: var(--ex-cta-bottom); }
+.lvl-auto-next { display: flex; flex-direction: column; align-items: center; gap: 7px; margin-bottom: 2px; color: var(--grey-300); font-size: 13px; line-height: 18px; }
+.lvl-auto-track { width: 100%; height: 3px; overflow: hidden; border-radius: 99px; background: rgba(255, 255, 255, .22); }
+.lvl-auto-track i { display: block; width: 100%; height: 100%; transform-origin: left; background: var(--orange-400); animation: lvlAutoProgress linear forwards; }
+@keyframes lvlAutoProgress { from { transform: scaleX(1) } to { transform: scaleX(0) } }
+/* 터치 48 */
+.ex-root .bs-btn.text { min-height: var(--ex-touch); }
+/* 글자 13 이상 · 회색 글자 대비 4.5 이상 */
+.ex-root .bs-badge { font-size: 13px; }
+.ex-root .c-weak { color: var(--ex-text-white); }
+.ex-root .bs-screen:not(.white) .bs-body > .t-caption, .ex-root .bs-card.tint .t-caption, .ex-root .ex-card-soft .t-caption,
+.ex-root .ex-noti .t-caption { color: var(--ex-text-grey); }
+
+/* ── 버튼 규칙 (DESIGN.md 11장 · exhibitTokens.js) ──
+   주 · 보조 · 텍스트 모두 높이 56 · 폭 꽉 · 둥글기 16 / 쌓을 때 사이 8, 주 버튼이 위 */
+.ex-root .bs-btn.secondary:not(.on-dark) { background: var(--ex-secondary-bg); color: var(--ex-secondary-text); }
+.ex-root .bs-btn.text { height: var(--ex-btn-h); min-height: var(--ex-btn-h); width: 100%; border-radius: var(--ex-btn-radius);
+  font-size: var(--ex-text-btn-size); font-weight: var(--ex-text-btn-weight); color: var(--ex-text-btn-color); }
+.ex-root .ex-btn-stack, .ex-root .lvl-cta, .ex-root .bs-cta.cart-cta { display: flex; flex-direction: column; gap: var(--ex-stack-gap); }
+
+/* ── 하단 시트 (exhibit/ReceiptQrSheet.jsx) — 검정 55% 덮개 · 위 둥글기 28 · 안쪽 24 · 0.25초 ── */
+.ex-sheet-dim { position: absolute; inset: 0; z-index: 50; background: var(--ex-sheet-dim); animation: kitFade .25s var(--ease); }
+.ex-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; background: var(--white); border-radius: var(--ex-sheet-radius) var(--ex-sheet-radius) 0 0;
+  padding: var(--ex-sheet-pad) var(--ex-sheet-pad) max(var(--ex-sheet-pad), calc(env(safe-area-inset-bottom, 0px) + 16px)); animation: kitSheetUp .25s var(--ease); }
+
+/* ── 영수증 화면 (exhibit/ScreenReceipt.jsx) ──
+   종이: 상태바 아래 ~ 하단 버튼 사이 공간의 가운데 (넘치면 위 24 · 버튼과 최소 24, 스크롤)
+   등장: 최종 위치에서 위 → 아래로 프린터처럼 0.8초 / 2초 뒤 settled 로 무조건 보이게 */
+.ex-receipt-space { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--ex-receipt-gap)) var(--ex-side) var(--ex-receipt-gap); }
+.ex-receipt-space > .rc-paper { margin-block: auto; }
+.ex-receipt-print { animation: exReceiptPrint var(--ex-receipt-print) cubic-bezier(.3, 0, .2, 1) both; }
+@keyframes exReceiptPrint { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.ex-receipt.settled .ex-receipt-print { animation: none; clip-path: none; }
+.ex-receipt-loading { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--grey-300); font-size: 13px; }
+.ex-receipt-spinner { width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, .28); border-top-color: var(--orange-400); border-radius: 50%; animation: receiptSpin .7s linear infinite; }
+@keyframes receiptSpin { to { transform: rotate(360deg) } }
+/* 꼬리 글은 한 줄로 (13px 고정폭 글꼴이라 자간만 아주 살짝) */
+.rc-paper .rc-tail { white-space: nowrap; letter-spacing: -0.3px; }
+
+/* 힌트: 바텀시트가 열려 있으면 시트 바깥 위쪽 어두운 곳에 흰 글자 (시트 위끝에서 12px 위 · 가운데) */
+.ex-hint-line.on-dim { color: #fff; font-size: 15px; font-weight: 600; }
+
+/* ── 처리 중 표시 2 · 3단계: 기록 중 → 체크 완료 (exhibit/ProcessingScreen.jsx) — 화면 자체가 #191F28 ── */
+.ex-process { position: absolute; inset: 0; z-index: 40; background: var(--grey-900); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ex-process-art { height: 120px; display: flex; align-items: flex-end; justify-content: center; }
+.ex-process-blob { height: 120px; width: auto; animation: exHop .6s ease-in-out infinite; }
+@keyframes exHop { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+.ex-process-text { margin-top: 20px; color: #fff; font: 600 17px/24px var(--font); display: flex; align-items: center; }
+.ex-process-dots { display: inline-flex; gap: 3px; margin-left: 4px; }
+.ex-process-dots i { width: 4px; height: 4px; border-radius: 2px; background: #fff; animation: btnDot .9s ease-in-out infinite; }
+.ex-process-dots i:nth-child(2) { animation-delay: .15s; }
+.ex-process-dots i:nth-child(3) { animation-delay: .3s; }
+/* 완료: 주황 원이 그려지며(0.3초) → 흰 체크가 그려짐(0.2초) */
+.ex-process-check { margin-bottom: 12px; }
+.ex-process-check circle { fill: var(--orange-500); transform-origin: 48px 48px; animation: exCircleIn .3s cubic-bezier(.34, 1.4, .64, 1) both; }
+.ex-process-check path { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 64; stroke-dashoffset: 64; animation: exCheckDraw .2s ease-out .3s forwards; }
+@keyframes exCircleIn { from { transform: scale(0) } }
+@keyframes exCheckDraw { to { stroke-dashoffset: 0 } }
+/* 완료 → 엔딩 카드 0.3초 페이드 */
+.ex-ending-in { animation: kitFade var(--ex-ending-fade, .3s) var(--ease) both; }
+
+/* ── 대기 화면 — 단순하게 (exhibit/AttractScreen.jsx · 2026-10-11) ── */
+.ah-screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--grey-100); font-family: var(--font); color: var(--grey-900); cursor: pointer; }
+.ah-header { flex: none; height: 56px; margin-top: env(safe-area-inset-top, 0px); padding: 0 var(--side); display: flex; align-items: center; }
+.ah-title { height: 28px; width: auto; display: block; }
+.ah-middle { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 0 var(--side); }
+.ah-card { background: var(--white); border-radius: 20px; }
+.ah-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 32px 20px; }
+.ah-bubble { position: relative; padding: 8px 16px; border-radius: 16px; background: var(--grey-100); color: var(--grey-800); font: 600 15px/20px var(--font); white-space: nowrap; margin-bottom: 24px; }
+.ah-bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--grey-100); border-bottom: 0; }
+.ah-pose-box { width: 240px; height: 180px; display: flex; align-items: flex-end; justify-content: center; }
+.ah-pose-box img { max-width: 240px; max-height: 100%; object-fit: contain; display: block; }
+.ah-hero-title { margin-top: 20px; font: 700 22px/30px var(--font); white-space: nowrap; }
+.ah-hero-sub { margin-top: 4px; font: 400 15px/20px var(--font); color: var(--ex-text-white); white-space: nowrap; }
+.ah-line { height: 56px; display: flex; align-items: center; justify-content: center; font: 400 15px/20px var(--font); color: var(--grey-700); white-space: nowrap; }
+.ah-line b { font-weight: 700; color: var(--grey-900); }
+.ah-cta { flex: none; position: relative; padding: 0 var(--side) var(--ex-cta-bottom); background: var(--grey-100); }
+.ah-cta::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(242, 244, 246, 0), var(--grey-100)); }

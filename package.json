@@ -1,0 +1,11 @@
+{
+  "name": "b-sue-app",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix web-preview run dev",
+    "setup": "npm --prefix web-preview install"
+  },
+  "dependencies": {
+    "lucide-react": "^1.52.0"
+  }
+}

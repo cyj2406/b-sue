@@ -1,0 +1,14 @@
+파일	QR 내용	붙일 곳
+card-01	bsue://card/01	하루 0원 챌린지
+card-02	bsue://card/02	2+1의 함정
+card-03	bsue://card/03	세일이라서 샀다
+card-04	bsue://card/04	장바구니 대청소
+card-05	bsue://card/05	배달앱 봉인
+card-06	bsue://card/06	커피 몇 잔의 법칙
+card-07	bsue://card/07	유령 구독 색출
+card-08	bsue://card/08	자동결제 잠복수사
+card-09	bsue://card/09	무료배송의 배신
+card-10	bsue://card/10	옷장 대방출
+card-11	bsue://card/11	냉장고 소탕
+card-12	bsue://card/12	만원짜리 5분
+holder	bsue://holder	카드홀더 (블롭 소환)

@@ -1,0 +1,15 @@
+app/build.gradle.kts 의 dependencies { ... } 안에 추가할 줄
+(프로젝트를 만든 뒤 Claude가 직접 넣어요. 버전은 안드로이드 스튜디오가 더 새 버전을 노란 줄로 추천하면 따라도 돼요)
+
+    // 폰 안 저장 (DataStore)
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    // Compose 안에서 화면 생명주기 (카메라용)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    // 카메라 (CameraX)
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
+    // QR 읽기 (ML Kit, 인터넷 없이 폰 안에서 동작하는 버전)
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    // 스플래시 화면 (오렌지 + 블롭)
+    implementation("androidx.core:core-splashscreen:1.0.1")

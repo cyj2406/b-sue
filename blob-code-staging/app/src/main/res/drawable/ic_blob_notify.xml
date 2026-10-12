@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 알림창 작은 아이콘: 탐정모자 쓴 블롭 (알림 아이콘은 흰색 한 가지 색이어야 해요) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 모자 윗부분 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8,3h8a2,2 0,0 1,2 2v3H6V5a2,2 0,0 1,2 -2z" />
+    <!-- 모자 챙 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M3,8.4h18v1.6H3z" />
+    <!-- 몸통 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,11c4.4,0 8,2.7 8,6.2c0,3.4 -3.6,5.3 -8,5.3s-8,-1.9 -8,-5.3c0,-3.5 3.6,-6.2 8,-6.2z" />
+</vector>

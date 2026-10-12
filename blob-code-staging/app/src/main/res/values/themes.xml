@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 앱 기본 테마 (화면은 Compose가 그려서 여기선 바탕색만) -->
+    <style name="Theme.BlobChulDong" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/blob_cream</item>
+    </style>
+
+    <!-- 스플래시: 앱 아이콘과 같은 그림(drawable-xxxhdpi/ic_launcher_foreground.png) + 배경 #D64518
+         다 뜨면 위 기본 테마로 바뀜 -->
+    <style name="Theme.BlobChulDong.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/blob_orange</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.BlobChulDong</item>
+    </style>
+</resources>

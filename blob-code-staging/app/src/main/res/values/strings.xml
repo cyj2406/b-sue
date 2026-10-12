@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">블롭 출동</string>
+
+    <!-- 접근성 설정 화면에 보이는 글 -->
+    <string name="blob_watch_label">블롭 출동 · 앱 감지</string>
+    <string name="blob_watch_description">쇼핑·배달앱이 열리면 탐정 블롭이 빼꼼 나타나고, 결제 버튼이 보이면 딱 3초 멈칫시켜요. 지켜보는 앱에서만 결제 버튼과 금액 글자를 그 순간 확인하고, 화면 내용은 저장하지 않으며, 폰 밖으로 아무것도 보내지 않아요.</string>
+
+    <!-- 알림 읽기 설정 화면에 보이는 이름 -->
+    <string name="payment_listener_label">블롭 출동 · 결제 알림 배웅</string>
+</resources>

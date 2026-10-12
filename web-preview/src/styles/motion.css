@@ -1,0 +1,98 @@
+/* ════════════════════════════════════════════════
+   움직임만 — 색·그림자·테두리는 여기 넣지 않아요 (전부 bsue-tokens.css)
+   기본 전환 250ms · ease (0.2, 0, 0, 1) — 토큰 --ease
+   ════════════════════════════════════════════════ */
+.kit-fade { animation: kitFade .25s var(--ease); }
+.kit-sheet-up { animation: kitSheetUp .25s var(--ease); }
+.kit-toast { animation: kitToast .25s var(--ease); }
+.kit-pop { animation: kitPop .35s cubic-bezier(.34, 1.56, .64, 1) both; }
+.kit-rise { animation: kitRise .25s var(--ease) both; }
+
+@keyframes kitFade { from { opacity: 0 } }
+@keyframes kitSheetUp { from { transform: translateY(100%) } }
+@keyframes kitToast { from { transform: translateY(12px); opacity: 0 } }
+@keyframes kitPop { from { transform: scale(.6); opacity: 0 } }
+@keyframes kitRise { from { transform: translateY(40px); opacity: 0 } }
+
+/* 탭바·버튼이 있는 화면: 바깥 틀 (스크롤 영역 + 아래 고정 요소) */
+.kit-frame { position: relative; height: 100%; overflow: hidden; }
+.kit-scroll { height: 100%; overflow-y: auto; }
+
+/* 출동 ⑦: 버튼 안이 3초 동안 왼쪽부터 차오름 */
+.kit-fill-3s { transform-origin: left center; animation: kitFill 3s linear both; }
+@keyframes kitFill { from { transform: scaleX(0) } }
+
+/* 반짝 터짐 (components/Burst.jsx): 0.6초 한 번, 블롭 바깥으로 */
+.kit-burst { position: absolute; left: 50%; width: 0; height: 0; pointer-events: none; z-index: 3; }
+.kit-burst i { position: absolute; left: 0; top: 0; border-radius: 2px; transform: translate(-50%, -50%) translate(var(--from)) rotate(45deg) scale(0);
+  animation: kitBurst .6s var(--ease) both; }
+@keyframes kitBurst {
+  0%   { transform: translate(-50%, -50%) translate(var(--from)) rotate(45deg) scale(0); opacity: 1; }
+  35%  { transform: translate(-50%, -50%) translate(var(--to)) rotate(45deg) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--to)) rotate(45deg) scale(.4); opacity: 0; }
+}
+
+/* ── 블롭 (components/Blob.jsx) — 기준점은 아래 가운데 ── */
+.blob { position: relative; flex-shrink: 0; }
+.blob-motion, .blob-hop, .blob-popwrap { position: absolute; inset: 0; transform-origin: 50% 100%; }
+.blob-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom center; user-select: none; }
+.blob-img.fade-in { animation: fadeIn .15s ease-out both; }
+.blob-img.fade-out { animation: fadeOut .15s ease-out both; }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes fadeOut { from { opacity: 1 } to { opacity: 0 } }
+
+/* 그림이 바뀔 때 살짝 튀기 */
+.blob-pop { animation: pop .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { from { transform: scale(.9) } to { transform: scale(1) } }
+
+/* 움직임 7종 (blobPose.js MOTIONS) — m-* 는 Blob.jsx 가 이름을 붙여서 만들어요 */
+.m-breathe { animation: breathe 1.7s ease-in-out infinite alternate; }
+@keyframes breathe { to { transform: scale(.985, 1.03); } }
+.h-on { animation: hop 3.6s ease-in-out infinite; }
+@keyframes hop { 0%, 82% { transform: none } 87% { transform: translateY(-7%) } 92% { transform: none } 95% { transform: translateY(-2%) } 100% { transform: none } }
+
+.m-sneak { animation: sneak .9s ease-in-out infinite alternate; }
+@keyframes sneak { from { transform: translateX(-3%) rotate(-3deg) } to { transform: translateX(3%) rotate(3deg) } }
+
+.m-stopEnter { animation: squashEnter .52s ease-out; }
+@keyframes squashEnter {
+  0% { transform: scale(1.45, .55) translateY(20%) }
+  35% { transform: scale(.82, 1.18) }
+  65% { transform: scale(1.08, .92) }
+  85% { transform: scale(.97, 1.03) }
+  100% { transform: none }
+}
+.m-countPress { animation: press .26s ease-out; }
+@keyframes press { 30% { transform: scale(1.14, .86) } 70% { transform: scale(.95, 1.05) } 100% { transform: none } }
+
+.m-cheerJump { animation: cheer 1.2s ease-in-out 1; }
+@keyframes cheer {
+  0% { transform: none }
+  8% { transform: scale(1.18, .82) }
+  25% { transform: translateY(-18%) scale(.9, 1.12) }
+  42% { transform: none }
+  48% { transform: scale(1.12, .88) }
+  58% { transform: scale(1.18, .82) }
+  75% { transform: translateY(-18%) scale(.9, 1.12) }
+  92% { transform: scale(1.1, .9) }
+  100% { transform: none }
+}
+.m-patSway { animation: sway 1.4s ease-in-out infinite alternate; }
+@keyframes sway { from { transform: rotate(-6deg) } to { transform: rotate(6deg) } }
+
+/* 전시 대기 화면: 블롭이 위아래로 천천히 (exhibit/AttractScreen.jsx) */
+.ex-float { animation: exFloat 3.2s ease-in-out infinite; }
+@keyframes exFloat { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+
+/* 전시 힌트 테두리: 천천히 나타났다 사라지기 (간격은 timing.js HINT_BLINK) */
+.ex-hint-ring { animation: exRingBlink 2.4s ease-in-out infinite; }
+@keyframes exRingBlink { 0%, 100% { opacity: 0 } 50% { opacity: 1 } }
+
+/* 전시 대기 화면 포즈 바뀔 때 (exhibit/AttractScreen.jsx)
+   ① 말풍선 + 캐릭터 같이 0.2초 흐려짐 → ② 새 묶음 나타나며 포즈가 아래에서 8px 튀어 오름 0.3초 */
+.ex-attract-leave { animation: exAttractLeave .2s var(--ease) forwards; }
+@keyframes exAttractLeave { to { opacity: 0 } }
+.ex-attract-enter { animation: exAttractFade .3s var(--ease) both; }
+@keyframes exAttractFade { from { opacity: 0 } }
+.ex-attract-enter .ex-attract-pop { animation: exAttractPop .3s cubic-bezier(.34, 1.56, .64, 1) both; }
+@keyframes exAttractPop { from { transform: translateY(8px) } }

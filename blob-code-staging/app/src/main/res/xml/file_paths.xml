@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 공유할 영수증 이미지를 잠깐 두는 곳 (앱 캐시 폴더 안 receipts) -->
+<paths>
+    <cache-path name="receipts" path="receipts/" />
+</paths>

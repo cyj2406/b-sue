@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 접근성 서비스 설정
+     - 앱 화면이 바뀌거나(typeWindowStateChanged) 내용이 바뀔 때(typeWindowContentChanged) 알림 받기
+     - 결제 버튼·금액 글자를 확인하려고 화면 글자 읽기(canRetrieveWindowContent) 켬 -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagIncludeNotImportantViews"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/blob_watch_description"
+    android:notificationTimeout="200" />

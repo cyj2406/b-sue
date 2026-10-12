@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 브랜드 색 (Compose 화면 색은 ui/theme/Color.kt 에 따로 있어요) -->
+    <color name="blob_orange">#D64518</color>
+    <color name="blob_black">#111111</color>
+    <color name="blob_cream">#F4ECDD</color>
+</resources>

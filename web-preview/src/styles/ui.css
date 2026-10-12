@@ -1,0 +1,83 @@
+/* ════════════════════════════════════════════════
+   앱 공통 틀 (토스 규칙, 2026-10-06 지시) — components/AppChrome.jsx
+   값은 전부 bsue-tokens.css 변수만
+   ════════════════════════════════════════════════ */
+
+/* ── 아이콘 버튼: 아이콘 24 + 사방 12 = 48×48 (2026-10-11 터치 48 규칙) ── */
+.ui-iconbtn { position: relative; width: 48px; height: 48px; padding: 12px; border: 0; background: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; flex: none; -webkit-tap-highlight-color: transparent; }
+.ui-iconbtn svg { position: relative; display: block; }
+.ui-iconbtn::before { content: ""; position: absolute; left: 4px; top: 4px; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--grey-100); opacity: 0; transition: opacity .1s var(--ease); }
+.ui-iconbtn:active::before { opacity: 1; }
+.ui-iconbtn.edge-left { margin-left: -12px; }   /* 아이콘이 좌우 여백 20 선에 맞게 */
+.ui-iconbtn.edge-right { margin-right: -12px; }
+.ui-header-right { display: flex; gap: 0; align-items: center; }
+.ui-header-right > .ui-iconbtn:last-child { margin-right: -12px; }
+
+/* ── 헤더: 64 + 상태바 안전영역, 좌우 20(카드와 같은 선), 스크롤하면 위에 붙고 1px 선 ── */
+.ui-header { position: sticky; top: 0; z-index: 10; padding-top: env(safe-area-inset-top); transition: box-shadow .15s var(--ease); }
+.ui-header.scrolled { box-shadow: inset 0 -1px 0 var(--grey-200); }
+.ui-header-row { position: relative; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--side); }
+.ui-header-title { position: absolute; left: 64px; right: 64px; text-align: center; font: 600 17px/1 var(--font); color: var(--grey-900);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.ui-logo { min-height: 48px; display: flex; align-items: center; font-size: 22px; color: var(--grey-900); -webkit-touch-callout: none; user-select: none; }
+
+/* ── 하단 탭바: 56 + 아래 안전영역 ── */
+.ui-tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; background: var(--white);
+  border-top: 1px solid var(--grey-100); padding-bottom: env(safe-area-inset-bottom); }
+.ui-tab { flex: 1; height: 56px; border: 0; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; color: var(--grey-400); font: 500 11px/1 var(--font); -webkit-tap-highlight-color: transparent; }
+.ui-tab.on { color: var(--grey-900); }
+.ui-tab .dot { width: 4px; height: 4px; border-radius: 50%; }
+.ui-tab.on .dot { background: var(--orange-500); }
+.ui-tab:active svg { transform: scale(.92); }
+
+/* 탭바가 있는 화면의 스크롤 영역: 탭바 높이만큼 아래 여백 */
+.ui-with-tabbar { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+
+/* ── 터치 영역 최소 44 ── */
+/* 작은 버튼·칩·'더보기' 글자: 보이는 크기는 그대로, 눌리는 영역만 넓힘 */
+.bs-btn.weak, .bs-btn.text, .bs-chip, .ui-more { position: relative; }
+.bs-btn.weak::after { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }   /* 36 → 48 */
+.bs-btn.text { min-height: 44px; }
+.bs-chip::after { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }       /* 32 → 44 */
+.ui-more { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0; min-height: 44px; min-width: 44px; margin: -12px 0; padding: 0; border: 0; background: none;
+  font: 400 13px/1 var(--font); color: var(--grey-500); cursor: pointer; }
+
+/* ── 리스트 행: 행 전체가 눌림 (최소 56), 눌리면 --grey-50 · .press 는 살짝 작아지기까지 ── */
+.ui-row-btn { min-height: 56px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .1s var(--ease); }
+.bs-card .ui-row-btn { margin: 0 -20px; padding-left: 20px; padding-right: 20px; }   /* 눌림 배경이 카드 끝까지 */
+.ui-row-btn:active { background: var(--grey-50); }
+.ui-row-btn.press { transition: background .1s var(--ease), transform .1s var(--ease); }
+.ui-row-btn.press:active { transform: scale(0.98); }
+
+/* 리스트·인라인 아이콘 (20) / 보조 화살표 (16) */
+.ui-inline-icon { flex: none; vertical-align: -4px; }
+.ui-chevron { flex: none; vertical-align: -3px; color: var(--grey-400); }
+
+/* 카드 전체가 버튼일 때 (수사대 2열 카드): 버튼과 같은 눌림 */
+.ui-card-btn { display: block; width: 100%; border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  transition: transform .1s var(--ease); -webkit-tap-highlight-color: transparent; }
+.ui-card-btn:active { transform: scale(0.97); }
+
+/* 쌓이는 순서: 화면(0) < 헤더·탭바(10) < 시트·딤(20) < 토스트(25) — 시트가 열리면 탭바를 덮어요 */
+.bs-dim { z-index: 20; }
+.bs-sheet { z-index: 21; }
+.bs-toast { z-index: 25; }
+
+/* 버튼 두 개 줄: 글자 길이와 상관없이 정확히 보조 1 : 주 2 (키트 .bs-btn-row 의 flex 1·2 가 글자 폭에 밀리지 않게) */
+.bs-btn-row .bs-btn { flex-basis: 0; min-width: 0; padding-left: 0; padding-right: 0; }
+
+/* 엔딩 · 해금 카드 아래 버튼 묶음 (components/LevelUp.jsx) — 전시에선 exhibit.css 가 아래 여백을 덮어써요 */
+.lvl-cta { position: absolute; left: var(--side); right: var(--side); bottom: 20px; }
+
+/* ── 처리 중 표시 1단계: 누른 버튼 안 점 3개 (DESIGN.md '처리 중 표시') ── */
+.bs-btn.is-loading { transform: scale(0.98); pointer-events: none; }
+.bs-btn.is-dimmed { opacity: 0.4; pointer-events: none; }
+.btn-dots { display: inline-flex; align-items: center; gap: 6px; height: 100%; }
+.btn-dots i { width: 6px; height: 6px; border-radius: 3px; background: currentColor; animation: btnDot .9s ease-in-out infinite; }
+.bs-btn.primary .btn-dots i { background: #fff; }
+.btn-dots i:nth-child(2) { animation-delay: .15s; }
+.btn-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes btnDot { 0%, 100% { transform: scale(.6); opacity: .5 } 40% { transform: scale(1.2); opacity: 1 } }
