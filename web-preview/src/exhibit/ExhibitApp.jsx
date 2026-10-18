@@ -13,7 +13,7 @@ import ProcessingScreen from './ProcessingScreen'
 import { receiptUrl } from './receiptLink'
 import { decideResult, endingText } from './result'
 import { attractImage } from './attractImages'
-import { ATTRACT_LINES } from './attractLines'
+import { receiptView } from './receiptQuotes'
 import { preloadReceipt } from './preload'
 import ScreenReceipt from './ScreenReceipt'
 import { LockScreen, NotificationBanner, PeekLayer, TimeSkip } from './parts/PhoneParts'
@@ -141,7 +141,7 @@ function ExhibitApp({ onExit, recovered = false }) {
     preloadReceipt()
     await Promise.all([
       document.fonts?.ready,
-      ...[attractImage(data.pose)].map((src) => { const im = new Image(); im.src = src; return im.decode?.().catch(() => {}) }),
+      ...[attractImage(receiptView(data).pose)].map((src) => { const im = new Image(); im.src = src; return im.decode?.().catch(() => {}) }),
     ])
   }, [s, result])
 
@@ -175,7 +175,6 @@ function ExhibitApp({ onExit, recovered = false }) {
       cups: coffee(result.amount),
       todaySaved: todayStats().saved,
       no: record.current?.no ?? 1,
-      pose: ATTRACT_LINES[Math.floor(Math.random() * ATTRACT_LINES.length)].pose, // 영수증 캐릭터 (랜덤 · QR에도 담겨요)
     }
   }
 

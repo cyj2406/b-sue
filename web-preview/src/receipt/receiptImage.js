@@ -1,5 +1,5 @@
 import { attractImage } from '../exhibit/attractImages'
-import { RECEIPT_SUBTITLE, RECEIPT_TAIL, RECEIPT_TITLE, receiptQuote, receiptResultLines } from '../exhibit/receiptQuotes'
+import { receiptView } from '../exhibit/receiptQuotes'
 import { dateLabel, defenseNo, timeLabel } from '../exhibit/receiptLink'
 import { EX } from '../exhibit/exhibitTokens'
 
@@ -18,11 +18,11 @@ const C = {
   sub: '#666666',
   dash: '#9A9A9A',
   foot: '#8B95A1',    // --grey-500
+  orange: '#D64518',  // 영수증 큰 줄 (지킨 돈 · 멈춘 시간)
 }
 const PIXEL = '"Galmuri11", "Pretendard", sans-serif'
 const MONO = '"Nanum Gothic Coding", monospace'
 const f = (weight, px, family) => `${weight} ${Math.round(px * K)}px ${family}`
-const won = (n) => n.toLocaleString('ko-KR')
 
 async function loadImage(src) {
   const img = new Image()
@@ -36,28 +36,27 @@ export async function drawReceipt(rc) {
     await Promise.all([f(700, 41, PIXEL), f(700, 22, PIXEL), f(400, 14, MONO), f(400, 13, MONO)]
       .map((font) => document.fonts.load(font, '비상수단 방어 번호 지킨 돈 0123456789')))
   } catch { /* 글꼴이 늦어도 그려요 */ }
-  const pose = await loadImage(attractImage(rc.pose)).catch(() => null)
-  const res = receiptResultLines(rc) // 결과 줄은 rc.result 만 읽어요
+  const v = receiptView(rc) // 글자 · 그림은 화면 영수증과 같은 함수에서
+  const pose = await loadImage(attractImage(v.pose)).catch(() => null)
 
   // 줄 목록 (화면 px 기준 높이 · 위 여백)
-  const T = { title: [700, 41, PIXEL, C.ink], sub: [400, 13, MONO, C.sub], body: [400, 14, MONO, C.ink], closing: [400, 13, MONO, C.ink], mid: [700, 15, PIXEL, C.ink], big: [700, 22, PIXEL, C.ink] }
+  const T = { title: [700, 41, PIXEL, C.ink], sub: [400, 13, MONO, C.sub], body: [400, 14, MONO, C.ink], closing: [400, 13, MONO, C.ink], mid: [700, 15, PIXEL, C.ink], big: [700, 22, PIXEL, C.orange] }
   const rows = [
-    { h: 45, style: 'title', center: RECEIPT_TITLE },
-    { h: 20, style: 'sub', center: RECEIPT_SUBTITLE },
+    { h: 45, style: 'title', center: v.title },
+    { h: 20, style: 'sub', center: v.subtitle },
     { h: 22, top: 16, style: 'mid', left: '방어 번호', right: defenseNo(rc.no) },
     { h: 20, style: 'sub', left: dateLabel(rc.date), right: timeLabel(rc.time) },
     { h: 20, top: 16, style: 'sub', left: '수량', left2: '항목', right: '금액' },
     { dash: true },
-    { h: 20, style: 'body', left: '1 x', left2: rc.itemName, right: won(rc.amount) },
-    { h: 20, top: 2, style: 'sub', indent: 36, left: `└ ${rc.guardian.name}` },
-    { h: 20, style: 'sub', indent: 44, left: `"${rc.guardian.question}"` },
+    { h: 20, style: 'body', left: '1 x', left2: rc.itemName, right: v.itemAmount },
+    { h: 20, top: 2, style: 'sub', indent: 36, left: v.itemNote },
     { dash: true },
-    { h: 30, top: 2, style: 'big', left: res.label, right: res.value },
-    { h: 20, style: 'body', right: res.note },
+    { h: 30, top: 2, style: 'big', left: v.label, right: v.value },
+    { h: 20, style: 'body', right: v.note },
     { dash: true },
     { h: 72, top: 16, image: true },
-    { h: 20, top: 8, style: 'closing', center: `"${receiptQuote(rc.pose)}"` },
-    { h: 20, top: 8, style: 'sub', center: RECEIPT_TAIL },
+    { h: 20, top: 8, style: 'closing', center: `"${v.quote}"` },
+    { h: 20, top: 8, style: 'sub', center: v.tail },
   ]
   const heightOf = (r) => (r.dash ? 21 : (r.top ?? 0) + r.h) * K
   const paperH = PAD_Y * 2 + rows.reduce((s, r) => s + heightOf(r), 0)

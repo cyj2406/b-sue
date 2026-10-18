@@ -1,5 +1,4 @@
 import { byId } from '../data/guardians'
-import { ATTRACT_LINES } from './attractLines'
 import { receiptBaseUrl } from './config'
 import { resultFromParam, resultToParam } from './result'
 import { SCENARIOS, coffee } from './scenarios'
@@ -8,9 +7,9 @@ import { SCENARIOS, coffee } from './scenarios'
 //  영수증 ↔ QR 주소 — 서버 없이 주소 안에 영수증 내용을 담아요 (개인정보 없음)
 //   s 시나리오(a·b·c) · d 날짜(YYMMDD) · t 시간(HHMM) · a 금액 · g 요원 key
 //   r 결과 s(saved 지킴)/p(paused 멈춤) — 예전 QR 의 h/b 도 읽어요 · n 오늘 몇 번째 관람객 · w 오늘 관람객이 지킨 돈
-//   p 영수증 캐릭터 포즈 번호 (attractLines.js 순서 0~8 · 없으면 0)
+//   (예전 QR 의 p= 포즈 번호는 무시해요 — 2026-10-18 부터 포즈는 상황별 고정 · receiptQuotes.js)
 //  상품명은 글자 대신 시나리오 코드로 찾아요 (주소가 짧고, 아무 글자나 넣은 가짜 영수증도 막아요)
-//  예: /r?s=a&d=261011&t=0112&a=41700&g=sale&r=s&n=57&w=1284300&p=0
+//  예: /r?s=a&d=261011&t=0112&a=41700&g=sale&r=s&n=57&w=1284300
 // ════════════════════════════════════════════════════════════════
 
 // 영수증 내용(receipt) → 주소
@@ -24,7 +23,6 @@ export function receiptUrl(rc) {
     r: resultToParam(rc.result),
     n: String(rc.no),
     w: String(rc.todaySaved),
-    p: String(Math.max(0, ATTRACT_LINES.findIndex((l) => l.pose === rc.pose))),
   })
   return `${receiptBaseUrl()}?${q}`
 }
@@ -42,8 +40,7 @@ export function receiptFromSearch(search) {
     const no = int(q.get('n'), 99_999)
     const todaySaved = int(q.get('w'), 1_000_000_000)
     const result = resultFromParam(q.get('r'))
-    const pi = q.has('p') ? int(q.get('p'), ATTRACT_LINES.length - 1) : 0
-    if (!sc || !guardian || amount == null || !no || todaySaved == null || pi == null) return null
+    if (!sc || !guardian || amount == null || !no || todaySaved == null) return null
     if (!/^\d{6}$/.test(d ?? '') || !/^\d{4}$/.test(t ?? '') || !result) return null
     const [mm, dd, hh, mi] = [d.slice(2, 4), d.slice(4, 6), t.slice(0, 2), t.slice(2, 4)].map(Number)
     if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || hh > 23 || mi > 59) return null
@@ -58,7 +55,6 @@ export function receiptFromSearch(search) {
       cups: coffee(amount),
       todaySaved,
       no,
-      pose: ATTRACT_LINES[pi].pose,
     }
   } catch {
     return null

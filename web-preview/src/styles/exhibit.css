@@ -123,6 +123,7 @@ body.exhibit-lock { overscroll-behavior: none; -webkit-user-select: none; user-s
 .rc-paper .rc-body { font: 400 14px/20px "Nanum Gothic Coding", monospace; }
 .rc-paper .rc-mid { font: 700 15px/22px "Galmuri11", var(--font); }
 .rc-paper .rc-big { font: 700 22px/30px "Galmuri11", var(--font); margin-top: 2px; }
+.rc-paper .rc-orange { color: #D64518; } /* 큰 줄 (지킨 돈 · 멈춘 시간) — 저장 이미지 C.orange 와 같은 값 */
 .rc-paper .rc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .rc-paper .rc-gap { margin-top: 16px; }
 .rc-paper .rc-center { text-align: center; }

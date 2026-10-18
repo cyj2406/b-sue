@@ -1,4 +1,4 @@
-import { ATTRACT_LINES } from './attractLines'
+import { RECEIPT_POSES } from './receiptQuotes'
 import { attractImage } from './attractImages'
 
 // ════════════════════════════════════════════════════════════════
@@ -12,7 +12,7 @@ const SAMPLE = '비상수단 방어 번호 지킨 돈 멈춘 시간 0123456789#�
 export function preloadReceipt() {
   try {
     FONTS.forEach((f) => document.fonts?.load(f, SAMPLE).catch(() => {}))
-    ATTRACT_LINES.forEach(({ pose }) => {
+    RECEIPT_POSES.forEach((pose) => {
       const img = new Image()
       img.src = attractImage(pose)
       img.decode?.().catch(() => {})
