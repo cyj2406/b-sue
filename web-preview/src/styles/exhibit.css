@@ -206,20 +206,24 @@ body.exhibit-lock { overscroll-behavior: none; -webkit-user-select: none; user-s
 .ex-ending-in { animation: kitFade var(--ex-ending-fade, .3s) var(--ease) both; }
 
 /* ── 대기 화면 — 단순하게 (exhibit/AttractScreen.jsx · 2026-10-11) ── */
-.ah-screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--grey-100); font-family: var(--font); color: var(--grey-900); cursor: pointer; }
+/* 대기 화면 (전시 모드 첫 화면) — 2026-10-18 온보딩 스타일 · 카드 없이 바탕 위에 떠 있어요 (DESIGN.md 11장) */
+.ah-screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--grey-100); font-family: var(--font); color: var(--grey-900); cursor: pointer; }
+.ah-screen > :not(.ah-decos) { position: relative; z-index: 1; }
 .ah-header { flex: none; height: 56px; margin-top: env(safe-area-inset-top, 0px); padding: 0 var(--side); display: flex; align-items: center; }
 .ah-title { height: 28px; width: auto; display: block; }
-.ah-middle { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 0 var(--side); }
-.ah-card { background: var(--white); border-radius: 20px; }
-.ah-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 32px 20px; }
-.ah-bubble { position: relative; padding: 8px 16px; border-radius: 16px; background: var(--grey-100); color: var(--grey-800); font: 600 15px/20px var(--font); white-space: nowrap; margin-bottom: 24px; }
-.ah-bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--grey-100); border-bottom: 0; }
-.ah-pose-box { width: 240px; height: 180px; display: flex; align-items: flex-end; justify-content: center; }
-.ah-pose-box img { max-width: 240px; max-height: 100%; object-fit: contain; display: block; }
-.ah-hero-title { margin-top: 20px; font: 700 22px/30px var(--font); white-space: nowrap; }
-.ah-hero-sub { margin-top: 4px; font: 400 15px/20px var(--font); color: var(--ex-text-white); white-space: nowrap; }
-.ah-line { height: 56px; display: flex; align-items: center; justify-content: center; font: 400 15px/20px var(--font); color: var(--grey-700); white-space: nowrap; }
-.ah-line b { font-weight: 700; color: var(--grey-900); }
-.ah-cta { flex: none; position: relative; padding: 0 var(--side) var(--ex-cta-bottom); background: var(--grey-100); }
-.ah-cta::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; pointer-events: none;
-  background: linear-gradient(to bottom, rgba(242, 244, 246, 0), var(--grey-100)); }
+.ah-intro { flex: none; margin-top: 32px; padding: 0 var(--side); text-align: center; }
+.ah-headline { font: 700 26px/36px var(--font); letter-spacing: -0.02em; white-space: nowrap; }
+.ah-desc { margin-top: 8px; font: 400 15px/20px var(--font); color: var(--grey-600); white-space: nowrap; }
+.ah-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding-bottom: 24px; }
+.ah-mascot { display: flex; flex-direction: column; align-items: center; }
+/* 흰 말풍선 — 블롭 오른쪽 위, 꼬리는 블롭 쪽(왼쪽 아래) */
+.ah-bubble { position: relative; margin: 0 0 16px 96px; padding: 8px 16px; border-radius: 16px; background: var(--white); color: var(--grey-900);
+  font: 600 15px/24px var(--font); white-space: nowrap; box-shadow: 0 8px 24px rgba(25, 31, 40, 0.10); }
+.ah-bubble::after { content: ""; position: absolute; left: 32px; bottom: -8px; border: 8px solid transparent; border-top-color: var(--white); border-bottom: 0; }
+.ah-pose { height: 220px; width: auto; display: block; transform: rotate(-8deg); filter: drop-shadow(0 12px 16px rgba(25, 31, 40, 0.12)); }
+/* 흩어진 장식: 각자 다른 박자로 조금씩 떠다녀요 */
+.ah-decos { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.ah-deco { position: absolute; display: block; transform: rotate(var(--rot)); filter: drop-shadow(0 6px 10px rgba(25, 31, 40, 0.10)); animation: ahDrift 4s ease-in-out infinite; }
+@keyframes ahDrift { 0%, 100% { transform: translateY(0) rotate(var(--rot)) } 50% { transform: translateY(-8px) rotate(calc(var(--rot) + 6deg)) } }
+@media (prefers-reduced-motion: reduce) { .ah-deco { animation: none; } }
+.ah-cta { flex: none; padding: 0 var(--side) var(--ex-cta-bottom); }

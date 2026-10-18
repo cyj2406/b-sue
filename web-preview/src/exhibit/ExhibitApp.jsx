@@ -259,7 +259,7 @@ function ExhibitApp({ onExit, recovered = false }) {
   return (
     <div ref={rootRef} className="ex-root" style={EX_CSS_VARS} onContextMenu={(e) => e.preventDefault()} onPointerDownCapture={() => setActivity((n) => n + 1)}>
       {/* 대기 화면: 아무 데나 누르면 시작 화면 */}
-      {screen === 'attract' && <AttractScreen stats={stats} onStart={() => setScreen('start')} />}
+      {screen === 'attract' && <AttractScreen onStart={() => setScreen('start')} />}
 
       {screen === 'start' && (
         <ExhibitStart
