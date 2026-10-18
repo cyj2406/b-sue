@@ -209,12 +209,12 @@ body.exhibit-lock { overscroll-behavior: none; -webkit-user-select: none; user-s
 /* 대기 화면 (전시 모드 첫 화면) — 2026-10-18 온보딩 스타일 · 카드 없이 바탕 위에 떠 있어요 (DESIGN.md 11장) */
 .ah-screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--grey-100); font-family: var(--font); color: var(--grey-900); cursor: pointer; }
 .ah-screen > :not(.ah-decos) { position: relative; z-index: 1; }
-.ah-header { flex: none; height: 56px; margin-top: env(safe-area-inset-top, 0px); padding: 0 var(--side); display: flex; align-items: center; }
+.ah-header { flex: none; height: 56px; margin-top: env(safe-area-inset-top, 0px); padding: 0 var(--side); display: flex; align-items: center; justify-content: center; }
 .ah-title { height: 28px; width: auto; display: block; }
-.ah-intro { flex: none; margin-top: 32px; padding: 0 var(--side); text-align: center; }
+.ah-intro { flex: none; margin-top: 40px; padding: 0 var(--side); text-align: center; }
 .ah-headline { font: 700 26px/36px var(--font); letter-spacing: -0.02em; white-space: nowrap; }
 .ah-desc { margin-top: 8px; font: 400 15px/20px var(--font); color: var(--grey-600); white-space: nowrap; }
-.ah-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding-bottom: 24px; }
+.ah-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 40px 0 8px; } /* 가운데보다 조금 아래 — 버튼 위 공간과 균형 */
 .ah-mascot { display: flex; flex-direction: column; align-items: center; }
 /* 흰 말풍선 — 블롭 오른쪽 위, 꼬리는 블롭 쪽(왼쪽 아래) */
 .ah-bubble { position: relative; margin: 0 0 16px 96px; padding: 8px 16px; border-radius: 16px; background: var(--white); color: var(--grey-900);

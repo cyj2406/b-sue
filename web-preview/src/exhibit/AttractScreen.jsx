@@ -6,22 +6,25 @@ import { attractImage as img } from './attractImages'
 //  대기 화면 (전시 모드 첫 화면) — 2026-10-18 온보딩 스타일: 카드 없이 바탕 위에 떠 있어요 · 화면 아무 데나 눌러도 시작
 //   헤더 56 (상태바 아래 · 좌우 20): 로고(title.png) 높이 28
 //   위: 헤드라인 2줄 26 Bold "반가워! 지금부터 / 지출 방어 시작해볼까?" → 8 → 설명 15 회색 (가운데)
-//   가운데 아래: 세일 포즈 블롭 -8도 기울여 둥실 + 흰 말풍선 (그림자)
-//   흩어진 장식: 동전 · % 태그 · 돋보기 · 반짝이 — 그림 파일 없이 아래 SVG (주황 · 검정 · 크림만) · 일부는 화면 밖으로 살짝 잘려요
+//   가운데 아래: 세일 포즈 블롭(pose_sale.png 원본 그대로 · 높이 220) -8도 기울여 둥실 + 흰 말풍선 (그림자)
+//   흩어진 장식: 동전 · 길쭉한 % 가격표 · 돋보기 · 반짝이 — 그림 파일 없이 아래 SVG (주황 · 검정 · 크림만)
+//    모두 화면 안 (가장자리에서 16 이상 · 떠다니고 기울어져도 안 잘리게) · 헤드라인 · 말풍선 · 버튼과 안 겹치게
 //   하단 고정 [시작하기]
 // ════════════════════════════════════════════════════════════════
 const TITLE = img('title')
 const HERO = ATTRACT_LINES.find((l) => l.pose === 'pose_sale') ?? ATTRACT_LINES[0]
 
-// 장식 자리 (390×844 기준 %) · size px · rot 기울기 · dur/delay 떠다니는 박자
+// 장식 자리 (390×844 기준 px) · w/h 크기 · rot 기울기 · dur/delay 떠다니는 박자
+//  x 는 왼쪽 끝 기준, r 은 오른쪽 끝 기준 (화면이 390보다 좁아도 오른쪽 장식이 안 잘리게)
+//  비어 있는 곳: 왼쪽 띠(x 16~64) · 오른쪽 띠(x 326~374) · 세로 220~740 (헤드라인 아래 ~ 버튼 위)
 const DECOS = [
-  { kind: 'coin',   left: '-4%', top: '30%', size: 56, rot: -14, dur: 4.2, delay: 0 },
-  { kind: 'tag',    left: '84%', top: '24%', size: 64, rot: 18,  dur: 5.0, delay: 0.6 },
-  { kind: 'spark',  left: '14%', top: '44%', size: 24, rot: 0,   dur: 3.4, delay: 1.1 },
-  { kind: 'glass',  left: '72%', top: '62%', size: 76, rot: -24, dur: 4.6, delay: 0.3 },
-  { kind: 'coin',   left: '86%', top: '78%', size: 40, rot: 12,  dur: 3.8, delay: 1.4 },
-  { kind: 'tag',    left: '2%',  top: '70%', size: 48, rot: -20, dur: 4.4, delay: 0.9 },
-  { kind: 'spark',  left: '78%', top: '43%', size: 18, rot: 0,   dur: 3.0, delay: 0.2 },
+  { kind: 'coin',  x: 24,  y: 244, w: 44, h: 44, rot: -14, dur: 4.2, delay: 0 },
+  { kind: 'tag',   r: 26, y: 228, w: 32, h: 48, rot: 16,  dur: 5.0, delay: 0.6 },
+  { kind: 'spark', x: 40,  y: 392, w: 20, h: 20, rot: 0,   dur: 3.4, delay: 1.1 },
+  { kind: 'spark', r: 30, y: 392, w: 16, h: 16, rot: 0,   dur: 3.0, delay: 0.2 },
+  { kind: 'glass', r: 36, y: 572, w: 64, h: 64, rot: -24, dur: 4.6, delay: 0.3 },
+  { kind: 'tag',   x: 28,  y: 596, w: 28, h: 42, rot: -14, dur: 4.4, delay: 0.9 },
+  { kind: 'coin',  r: 24, y: 676, w: 36, h: 36, rot: 12,  dur: 3.8, delay: 1.4 },
 ]
 
 export default function AttractScreen({ onStart }) {
@@ -30,7 +33,7 @@ export default function AttractScreen({ onStart }) {
       {/* 흩어진 장식 (눌러도 그냥 시작) */}
       <div className="ah-decos" aria-hidden="true">
         {DECOS.map((d, i) => (
-          <span key={i} className="ah-deco" style={{ left: d.left, top: d.top, width: d.size, height: d.size, '--rot': `${d.rot}deg`, animationDuration: `${d.dur}s`, animationDelay: `${d.delay}s` }}>
+          <span key={i} className="ah-deco" style={{ left: d.x, right: d.r, top: d.y, width: d.w, height: d.h, '--rot': `${d.rot}deg`, animationDuration: `${d.dur}s`, animationDelay: `${d.delay}s` }}>
             <Deco kind={d.kind} />
           </span>
         ))}
@@ -73,11 +76,13 @@ function Deco({ kind }) {
     )
   }
   if (kind === 'tag') {
+    // 길쭉한 가격표: 둥근 사각 몸통 + 위쪽 끈 구멍 + 끈 고리
     return (
-      <svg viewBox="0 0 48 48" width="100%" height="100%">
-        <path d="M8 6h20l14 14-20 20L8 26z" fill={O} stroke={K} strokeWidth="2.5" strokeLinejoin="round" />
-        <circle cx="16" cy="14" r="3" fill={C} stroke={K} strokeWidth="2" />
-        <text x="26" y="31" textAnchor="middle" fontFamily="Pretendard, sans-serif" fontWeight="800" fontSize="15" fill={C} transform="rotate(-45 26 26)">%</text>
+      <svg viewBox="0 0 32 48" width="100%" height="100%">
+        <path d="M16 9C16 4 20 1 24 2" fill="none" stroke={K} strokeWidth="1.8" strokeLinecap="round" />
+        <rect x="3" y="7" width="26" height="39" rx="8" fill={O} stroke={K} strokeWidth="2.2" />
+        <circle cx="16" cy="14" r="3" fill={C} stroke={K} strokeWidth="1.8" />
+        <text x="16" y="36" textAnchor="middle" fontFamily="Pretendard, sans-serif" fontWeight="800" fontSize="15" fill={C}>%</text>
       </svg>
     )
   }
