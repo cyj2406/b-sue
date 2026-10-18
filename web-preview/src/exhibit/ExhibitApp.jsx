@@ -363,6 +363,7 @@ function ExhibitApp({ onExit, recovered = false }) {
           scenarioId={s.id}
           phase={screen === 'lock' ? `lock-${lockView?.kind}` : 'shop'}
           paused={!!(idleAsk || operator || skip || floating)}
+          onPeek={showPeek}
         />
       )}
 

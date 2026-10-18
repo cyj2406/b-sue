@@ -10,6 +10,7 @@ import { EX } from './exhibitTokens'
 //  · 토스트가 떠 있는 동안은 글자를 숨겨요 (같은 자리)
 //  · 몇 초 동안 아무것도 안 누르면 눌러야 할 버튼 바깥에 주황 테두리가 천천히 깜빡 (버튼은 그대로)
 //  · 블롭이 나와 있으면 숨김
+//  · stuck 단계(일부러 숨긴 버튼): 헤매는 것 같으면 블롭 빼꼼 → 대상 바로 아래 한 줄 + 진한 테두리 → 더 지나면 ↓ 화살표
 //  단계 · 문구 · 버튼 찾는 기준은 전부 hints.js 표에서
 // ════════════════════════════════════════════════════════════════
 const POLL = 300
@@ -38,16 +39,24 @@ function visible(root, selector) {
   return [...root.querySelectorAll(selector)].find((el) => el.getClientRects().length && el.offsetWidth > 0)
 }
 
-export default function HintLayer({ rootRef, scenarioId, phase, paused }) {
-  const [view, setView] = useState(null) // { key, text, bottom, onDim, ring: {x,y,w,h,r} | null, showText }
+export default function HintLayer({ rootRef, scenarioId, phase, paused, onPeek }) {
+  const [view, setView] = useState(null) // { key, text, bottom, top, onDim, ring: {x,y,w,h,r} | null, showText, strong, arrow }
   const stepKey = useRef(null)
   const since = useRef(Date.now()) // 단계가 바뀌었거나 마지막으로 누른 시각
+  const stuck = useRef({ start: 0, misses: 0, at: 0 }) // stuck 단계: 들어온 시각 · 다른 곳 누른 횟수 · 1단계 시작 시각
+  const target = useRef(null) // 지금 단계에서 눌러야 할 것 (다른 곳 누름 세기용)
+  const peekRef = useRef(onPeek)
+  peekRef.current = onPeek
 
   // 누르면: 테두리 사라지고 시계 다시
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    const touched = () => { since.current = Date.now() }
+    const touched = (e) => {
+      since.current = Date.now()
+      // stuck 단계에서 대상 말고 다른 곳을 누르면 한 번 '헤맴'
+      if (target.current && !e.target.closest?.(target.current)) stuck.current.misses += 1
+    }
     root.addEventListener('pointerdown', touched, true)
     return () => root.removeEventListener('pointerdown', touched, true)
   }, [rootRef])
@@ -59,20 +68,32 @@ export default function HintLayer({ rootRef, scenarioId, phase, paused }) {
     const tick = () => {
       const root = rootRef.current
       if (!root) return
-      // 블롭이 나와 있으면 숨김 (그동안은 '안 누른 시간'도 다시 세요)
-      if (root.querySelector(BLOB_ON)) { since.current = Date.now(); setView(null); return }
+      // 블롭이 나와 있으면 숨김 (그동안은 '안 누른 시간'도 다시 세요 · stuck 2단계 시계도 블롭이 들어간 뒤부터)
+      if (root.querySelector(BLOB_ON)) { since.current = Date.now(); if (stuck.current.at) stuck.current.at = Date.now(); setView(null); return }
       // 아래쪽 단계부터 맞춰보기
       let step = null
       for (let i = steps.length - 1; i >= 0; i--) {
         if (matches(root, phase, steps[i].when)) { step = steps[i]; break }
       }
-      if (!step) { setView(null); stepKey.current = null; return }
+      if (!step) { setView(null); stepKey.current = null; target.current = null; return }
 
       const key = `${scenarioId}:${steps.indexOf(step)}`
-      if (stepKey.current !== key) { stepKey.current = key; since.current = Date.now() }
-      const waited = (Date.now() - since.current) / 1000
+      if (stepKey.current !== key) {
+        stepKey.current = key
+        since.current = Date.now()
+        stuck.current = { start: Date.now(), misses: 0, at: 0 }
+      }
+      target.current = step.stuck ? step.target : null
+      const now = Date.now()
+      // stuck 단계: 시간이 지났거나 다른 곳을 여러 번 누르면 1단계 시작 (블롭 빼꼼 한 번)
+      if (step.stuck && !stuck.current.at && ((now - stuck.current.start) / 1000 >= step.stuck.after || stuck.current.misses >= step.stuck.misses)) {
+        stuck.current.at = now
+        if (step.stuck.peek) { peekRef.current?.(step.stuck.peek); setView(null); return }
+      }
+      const waited = (now - since.current) / 1000
       const after = step.after ?? DEFAULT_AFTER
-      const ready = waited >= after
+      const ready = step.stuck ? !!stuck.current.at : waited >= after
+      const arrow = !!(step.stuck && stuck.current.at && (now - stuck.current.at) / 1000 >= step.stuck.arrow)
 
       // 테두리: 대상 버튼 위치를 재서 바깥에 따로 그려요
       let ring = null
@@ -88,8 +109,11 @@ export default function HintLayer({ rootRef, scenarioId, phase, paused }) {
       const h = root.getBoundingClientRect().height
       const sheet = visible(root, '.bs-sheet')
       let bottom = null
+      let top = null
       let onDim = false
-      if (sheet) {
+      if (step.stuck && ring) {
+        top = ring.y + ring.h + EX.hintGap // 일부러 숨긴 버튼: 글자를 그 버튼 바로 아래에
+      } else if (sheet) {
         bottom = h - (sheet.getBoundingClientRect().top - root.getBoundingClientRect().top) + EX.hintGap
         onDim = true
       } else {
@@ -100,9 +124,12 @@ export default function HintLayer({ rootRef, scenarioId, phase, paused }) {
         key,
         text: step.text,
         bottom,
+        top,
         onDim,
-        showText: (step.quiet ? ready : true) && !root.querySelector(TOAST_ON),
+        showText: (step.quiet || step.stuck ? ready : true) && !root.querySelector(TOAST_ON),
         ring,
+        strong: !!step.stuck,
+        arrow,
       })
     }
     tick()
@@ -116,12 +143,15 @@ export default function HintLayer({ rootRef, scenarioId, phase, paused }) {
     <div className="ex-hint-layer" aria-hidden={!view.showText}>
       {view.ring && (
         <div
-          className="ex-hint-ring"
+          className={`ex-hint-ring${view.strong ? ' strong' : ''}`}
           style={{ left: view.ring.x, top: view.ring.y, width: view.ring.w, height: view.ring.h, borderRadius: view.ring.r, animationDuration: `${HINT_BLINK * 2}s` }}
         />
       )}
+      {view.arrow && view.ring && (
+        <div className="ex-hint-arrow" style={{ left: view.ring.x + view.ring.w / 2, top: view.ring.y }} aria-hidden="true">↓</div>
+      )}
       {view.showText && (
-        <div key={view.key} className={`ex-hint-line kit-fade${onDark ? ' on-dark' : ''}${view.onDim ? ' on-dim' : ''}`} aria-live="polite" style={view.bottom != null ? { bottom: view.bottom } : undefined}>
+        <div key={view.key} className={`ex-hint-line kit-fade${onDark ? ' on-dark' : ''}${view.onDim ? ' on-dim' : ''}${view.top != null ? ' below' : ''}`} aria-live="polite" style={view.top != null ? { top: view.top, bottom: 'auto' } : view.bottom != null ? { bottom: view.bottom } : undefined}>
           {view.text}
         </div>
       )}

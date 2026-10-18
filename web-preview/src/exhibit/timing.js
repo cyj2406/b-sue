@@ -10,8 +10,13 @@ export const IDLE_SECOND = 15
 export const HINT_NUDGE = 5
 export const HINT_BLINK = 1.2
 
-// C 멤버십 화면: 이만큼 안 누르면 "해지 버튼은 작게 숨겨두는 법이야" + [구독 해지] 테두리
-export const MEMBERSHIP_QUIET = 10
+// C 멤버십 화면 '헤매는 것 같으면' (2026-10-18)
+//  1단계: 이만큼 [멤버십 해지]를 안 누르거나 · 다른 곳을 MEMBERSHIP_MISSES 번 누르면
+//         블롭 빼꼼 "해지 버튼은 작게 숨겨두는 법이야" → 링크 바로 아래 "멤버십 해지를 눌러봐" + 진한 주황 테두리
+//  2단계: 1단계 뒤 이만큼 더 안 누르면 링크 위 ↓ 화살표
+export const MEMBERSHIP_QUIET = 8
+export const MEMBERSHIP_MISSES = 2
+export const MEMBERSHIP_ARROW = 8
 
 // 대기 화면 말풍선이 바뀌는 간격
 export const ATTRACT_ROTATE = 8

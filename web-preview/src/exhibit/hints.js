@@ -1,4 +1,4 @@
-import { HINT_NUDGE, MEMBERSHIP_QUIET } from './timing'
+import { HINT_NUDGE, MEMBERSHIP_ARROW, MEMBERSHIP_MISSES, MEMBERSHIP_QUIET } from './timing'
 
 // ════════════════════════════════════════════════════════════════
 //  체험 중 힌트 표 — 문구 · 단계 알아보는 기준 · 깜빡일 버튼을 여기 한곳에
@@ -16,6 +16,9 @@ import { HINT_NUDGE, MEMBERSHIP_QUIET } from './timing'
 //   target : 깜빡일 버튼 (CSS 선택자 — 버튼 글자가 바뀌어도 안 깨지게 모양으로 찾아요)
 //   after  : 몇 초 안 누르면 테두리 (기본 HINT_NUDGE)
 //   quiet  : true 면 after 초가 지나야 글자도 테두리도 나와요
+//   stuck  : '헤매는 것 같으면' 단계 (일부러 숨긴 버튼용) — { after, misses, peek, arrow }
+//            단계에 들어온 뒤 after 초가 지나거나 · 대상 말고 다른 곳을 misses 번 누르면
+//            블롭 빼꼼(peek) → 글자는 대상 바로 아래 12px · 진한 주황 테두리 → arrow 초 더 지나면 대상 위 ↓ 화살표
 //  아래쪽 단계부터 먼저 맞춰봐요 (결제 시트가 주문서 위에 떠 있을 때 시트 쪽이 이기게)
 // ════════════════════════════════════════════════════════════════
 
@@ -46,8 +49,13 @@ export const HINTS = {
   // C: 알림만 — '곧 빠져나갈 돈' · '정말 떠나시겠어요?'는 선택 장면이라 힌트 없음
   c: [
     { text: '알림을 눌러봐', when: { phase: 'lock-opening', has: notification }, target: notification },
-    // 멤버십 관리: 평소엔 힌트 없음 → 10초 안 누르면 한 줄 + "멤버십 해지" 링크 테두리
-    { text: '해지 버튼은 작게 숨겨두는 법이야', when: { phase: 'shop', has: '[data-fx="c-membership"]' }, target: T('leave-link'), quiet: true, after: MEMBERSHIP_QUIET },
+    // 멤버십 관리: 평소엔 힌트 없음 → 헤매는 것 같으면 (8초 · 다른 곳 2번) 블롭이 알려주고 링크 아래 한 줄 + 테두리 → 8초 더 ↓
+    {
+      text: '멤버십 해지를 눌러봐',
+      when: { phase: 'shop', has: '[data-fx="c-membership"]' },
+      target: T('leave-link'),
+      stuck: { after: MEMBERSHIP_QUIET, misses: MEMBERSHIP_MISSES, peek: '해지 버튼은 작게 숨겨두는 법이야', arrow: MEMBERSHIP_ARROW },
+    },
   ],
 }
 
