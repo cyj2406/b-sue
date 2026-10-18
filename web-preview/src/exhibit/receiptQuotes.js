@@ -27,7 +27,7 @@ const BY_RESULT = {
 const BY_SCENARIO = {
   a: { // 새벽 러닝화
     item: { saved: '↳ 3초 멈추고 안 샀어', paused: '↳ 그래도 3초는 고민했어' },
-    quote: { saved: '신발장부터 보고 자자.', paused: '잘 신으면 돼. 다음 판 있잖아.' },
+    quote: { saved: '새벽 쇼핑 이겼다! 이제 자러 가.', paused: '잘 신으면 돼. 다음 판 있잖아.' },
   },
   b: { // 치킨 배달
     item: { saved: '↳ 3초 멈추고 안 샀어', paused: '↳ 그래도 3초는 고민했어' },
