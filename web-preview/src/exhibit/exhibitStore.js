@@ -3,6 +3,8 @@
 //  브라우저 저장소의 'exhibit.' 이름표가 붙은 칸에만 써요.
 // ════════════════════════════════════════════════════════════════
 
+import { isSaved } from './result'
+
 const KEY_RECORDS = 'exhibit.records'   // 관람객 체험 기록 전체
 const KEY_ARCHIVE = 'exhibit.archive'   // 날짜별로 저장해 둔 카운터 (운영자 메뉴, E4)
 
@@ -23,7 +25,8 @@ function write(key, value) {
 
 const today = () => new Date().toLocaleDateString('sv-SE') // 2026-11-14
 
-// 기록 한 건: { no, at, date, scenario, result: 'held'|'bought', amount, guardian, seconds }
+// 기록 한 건: { no, at, date, scenario, result: 'saved'|'paused', amount, guardian, seconds }
+//  (2026-10-18 이전 기록은 'held'|'bought' — isSaved 가 둘 다 읽어요)
 export function getRecords() {
   return read(KEY_RECORDS, [])
 }
@@ -49,7 +52,7 @@ export function addRecord({ scenario, result, amount, guardian, seconds }) {
 // 시작 화면 맨 위 카운터: 오늘 관람객이 지킨 돈 · 체험 수 · 참은 비율
 export function todayStats() {
   const todays = getRecords().filter((r) => r.date === today())
-  const held = todays.filter((r) => r.result === 'held')
+  const held = todays.filter((r) => isSaved(r.result)) // 지킨 돈은 saved 만 · 인원은 모두
   return {
     saved: held.reduce((sum, r) => sum + (r.amount ?? 0), 0),
     count: todays.length,
@@ -89,7 +92,7 @@ export function setSoundOn(on) {
 export function topGuardian() {
   const counts = {}
   getRecords()
-    .filter((r) => r.date === today() && r.result === 'held')
+    .filter((r) => r.date === today() && isSaved(r.result))
     .forEach((r) => { counts[r.guardian] = (counts[r.guardian] ?? 0) + 1 })
   const [guardian, count] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] ?? []
   return guardian ? { guardian, count } : null

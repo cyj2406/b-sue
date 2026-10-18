@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { isSaved } from './result'
 import Blob from '../components/Blob'
 import Burst from '../components/Burst'
 import { MISSION_ART, SCENES } from '../data/blobPose'
@@ -147,7 +148,7 @@ export default function CounterScreen() {
         {last && (
           <div key={last.at} className="kit-rise">
             방금 <b style={{ color: 'var(--white)' }}>제 {last.no}번 관람객</b>
-            {last.result === 'held'
+            {isSaved(last.result)
               ? <>이 <b style={{ color: 'var(--orange-400)' }}>{won(last.amount)}원</b>을 지켰어</>
               : <>이 딱 3초 멈췄어</>}
             {lastG && <span style={{ color: 'var(--grey-500)' }}> · 요원 '{lastG.name}'</span>}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { MISSION_ART } from '../data/blobPose'
+import { processingText } from './result'
 import { PROCESS_DONE, PROCESS_MAX, PROCESS_MIN } from './timing'
 
 // ════════════════════════════════════════════════════════════════
@@ -10,7 +11,7 @@ import { PROCESS_DONE, PROCESS_MAX, PROCESS_MIN } from './timing'
 //    최소 PROCESS_MIN 초는 보여주고, PROCESS_MAX 초가 넘으면 덜 끝났어도 다음으로
 //  · 완료: 블롭 자리에 주황 원(0.3초) + 흰 체크(0.2초), 글은 "기록 완료" → PROCESS_DONE 초 뒤 onDone
 // ════════════════════════════════════════════════════════════════
-export default function ProcessingScreen({ guardian, held, prepare, onDone }) {
+export default function ProcessingScreen({ guardian, result, prepare, onDone }) {
   const [done, setDone] = useState(false)
   const finished = useRef(false)
 
@@ -47,7 +48,7 @@ export default function ProcessingScreen({ guardian, held, prepare, onDone }) {
         )}
       </div>
       <div className="ex-process-text">
-        {done ? '기록 완료' : <>{held ? '지킨 돈 계산하는 중' : '멈춘 3초 기록하는 중'}<span className="ex-process-dots" aria-hidden="true"><i /><i /><i /></span></>}
+        {done ? '기록 완료' : <>{processingText(result)}<span className="ex-process-dots" aria-hidden="true"><i /><i /><i /></span></>}
       </div>
     </div>
   )

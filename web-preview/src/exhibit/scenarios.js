@@ -55,8 +55,8 @@ export const SCENARIOS = {
     },
     // 8) 엔딩
     ending: {
-      heldTitle: '오늘 밤, {amount}원을 지켰어',
-      boughtTitle: '오늘 밤, 딱 3초 멈췄어',
+      savedTitle: '오늘 밤, {amount}원을 지켰어',
+      pausedTitle: '오늘 밤, 딱 3초 멈췄어',
       itemName: '한정판 러닝화',
       boardCaption: '이 요원은 보드판 쇼핑앱 칸에 있어', // 엔딩 카드 아래 작은 글씨 → 보드판으로
     },
@@ -115,8 +115,8 @@ export const SCENARIOS = {
       farewell: '맛있게 먹어! 냉장고 두부는 내일 꼭',
     },
     ending: {
-      heldTitle: '오늘 저녁, {amount}원을 지켰어',
-      boughtTitle: '오늘 저녁, 딱 3초 멈췄어',
+      savedTitle: '오늘 저녁, {amount}원을 지켰어',
+      pausedTitle: '오늘 저녁, 딱 3초 멈췄어',
       itemName: '치킨 배달',
       boardCaption: '보드판 배달앱 칸에 있어',
       bonusCaption: '냉장고 소탕 요원도 함께 합류했어', // 냉장고 알림이 떴으면
@@ -154,8 +154,8 @@ export const SCENARIOS = {
     held: { cheer: '매달 17,000원 새는 구멍 막았다!' },  // 해지하러 가기
     bought: { farewell: '좋아, 그럼 이번 달에는 꼭 보기!' }, // 계속 쓸래
     ending: {
-      heldTitle: '오늘 밤, 매달 {amount}원 구멍을 막았어',
-      boughtTitle: '오늘 밤, 딱 3초 멈췄어',
+      savedTitle: '오늘 밤, 매달 {amount}원 구멍을 막았어',
+      pausedTitle: '오늘 밤, 딱 3초 멈췄어',
       itemName: '스트림플러스 구독',
       boardCaption: '보드판 침대·밤 칸에 있어',
     },

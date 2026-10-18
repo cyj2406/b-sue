@@ -14,7 +14,7 @@ import { coffee } from '../scenarios'
 //  ④ 가짜 '스트림플러스' 멤버십 관리: 이용권 · 다음 결제일 · 금액 · 결제수단 · 마지막 시청 → 맨 아래 작은 회색 링크 "멤버십 해지"
 //  ⑤ "정말 떠나시겠어요?" + 혜택 목록 + [3개월 50% 할인 받고 계속 보기](주) / [해지 계속하기](텍스트) — 선택 장면
 //  ⑥ 해지 완료 · 다음 결제일부터 청구되지 않아요 → 엔딩
-//  해지 = '참았다'(지킨 돈에 들어감) · 계속 쓸래 / 할인 받고 계속 보기 = '그래도 살래'로 기록
+//  해지 완료 = 'saved'(지킨 돈에 들어감) · 계속 쓸래 / 할인 받고 계속 보기 = 'paused' (exhibit/result.js)
 //  가짜 앱 안 문구는 존댓말 · 문구는 scenarios.js c
 // ════════════════════════════════════════════════════════════════
 const krw = (n) => n.toLocaleString('ko-KR') + '원'
@@ -33,7 +33,7 @@ export default function StreamPlus({ s, onPeek, onEnd, onBack }) {
   const keep = () => {
     if (kept) return
     setKept(true)
-    end('bought')
+    end('paused')
   }
   const leavePress = usePressOnce(PRESS_LOADING)
   const donePress = usePressOnce(PRESS_LOADING)
@@ -46,7 +46,7 @@ export default function StreamPlus({ s, onPeek, onEnd, onBack }) {
       <div className="fx-screen kit-fade" data-fx="c-done" style={{ background: 'var(--white)', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 var(--side)' }}>
         <div className="t-title2">{m.done}</div>
         <div className="fx-small fx-muted" style={{ marginTop: 4 }}>{sub.name} · {m.doneSub}</div>
-        <button type="button" className={`bs-btn primary${donePress.cls('next')}`} style={{ width: '100%', marginTop: 24 }} onClick={() => donePress.press('next', () => end('held'))}>{donePress.label('next', '다음')}</button>
+        <button type="button" className={`bs-btn primary${donePress.cls('next')}`} style={{ width: '100%', marginTop: 24 }} onClick={() => donePress.press('next', () => end('saved'))}>{donePress.label('next', '다음')}</button>
       </div>
     )
   }

@@ -11,12 +11,13 @@ import IdleCheck from './IdleCheck'
 import OperatorMenu from './OperatorMenu'
 import ProcessingScreen from './ProcessingScreen'
 import { receiptUrl } from './receiptLink'
+import { decideResult, endingText } from './result'
 import { attractImage } from './attractImages'
 import { ATTRACT_LINES } from './attractLines'
 import { preloadReceipt } from './preload'
 import ScreenReceipt from './ScreenReceipt'
 import { LockScreen, NotificationBanner, PeekLayer, TimeSkip } from './parts/PhoneParts'
-import { READY, SCENARIOS, coffee, fill } from './scenarios'
+import { READY, SCENARIOS, coffee } from './scenarios'
 import ShopFlow from './ShopFlow'
 import Baegopa from './apps/Baegopa'
 import StreamPlus from './apps/StreamPlus'
@@ -41,7 +42,7 @@ function ExhibitApp({ onExit, recovered = false }) {
   const [screen, setScreen] = useState('attract') // attract | start | lock | shop | done | ending | receipt
   const [lockView, setLockView] = useState(null)  // 잠금화면에 보일 시계·알림 (처음 / 다음 날 아침)
   const [floating, setFloating] = useState(null)  // 앱 위로 내려오는 알림
-  const [result, setResult] = useState(null)      // { result, amount, guardian }
+  const [result, setResult] = useState(null)      // { result: 'saved'|'paused', amount, guardian, bonus } — result.js
   const [scenarioId, setScenarioId] = useState(null)
   const [showNoti, setShowNoti] = useState(false)
   const [peek, setPeek] = useState(null)
@@ -56,6 +57,7 @@ function ExhibitApp({ onExit, recovered = false }) {
   const startedAt = useRef(0)   // 체험 시작 시각 (기록의 '걸린 시간')
   const saved = useRef(false)   // 엔딩에서 기록은 한 번만
   const record = useRef(null)   // 방금 저장한 기록 (영수증의 '제 N번')
+  const receiptReady = useRef(null) // 기록 중 화면에서 미리 만든 이번 관람객 영수증
   const later = useRef([])      // 예약된 알림·빼꼼 (장면이 바뀌면 취소)
   const after = (ms, fn) => later.current.push(setTimeout(fn, ms))
   const cancelLater = () => { later.current.forEach(clearTimeout); later.current = [] }
@@ -73,6 +75,7 @@ function ExhibitApp({ onExit, recovered = false }) {
     setPeek(null)
     setSkip(null)
     setReceipt(null)
+    receiptReady.current = null
     setIdleAsk(false)
     setStats(todayStats())
   }, [])
@@ -105,10 +108,11 @@ function ExhibitApp({ onExit, recovered = false }) {
     peekTimer.current = setTimeout(() => setPeek(null), 4000)
   }
 
-  // 출동에서 고른 뒤
-  const vars = (amount) => ({ amount, cups: coffee(amount) })
   // 선택 직후(참았다 · 그래도 살래 · 계속 쓸래 · 해지 완료) → 기록 중 화면 → 체크 완료 → 엔딩 (DESIGN.md '처리 중 표시')
-  const onResult = (r) => {
+  // 결과는 여기서 한 번만 정해요 (result.js decideResult) — 아래는 모두 result.result 만 읽어요
+  const onResult = (choice) => {
+    const r = { ...choice, result: decideResult(choice.result) }
+    receiptReady.current = null // 앞 관람객 영수증이 남지 않게
     cancelLater()
     setFloating(null)
     setPeek(null)
@@ -119,7 +123,6 @@ function ExhibitApp({ onExit, recovered = false }) {
 
 
   // 기록 중 화면 동안 준비: 기록 한 건 저장 · 영수증 내용 · 랜덤 포즈 · QR 주소 · 그림/글꼴 미리 불러오기
-  const receiptReady = useRef(null)
   const prepareEnding = useCallback(async () => {
     if (!s || !result) return
     if (!saved.current) {
@@ -167,7 +170,7 @@ function ExhibitApp({ onExit, recovered = false }) {
       time: s.clock.time,
       itemName: s.ending.itemName,
       amount: result.amount,
-      held: result.result === 'held',
+      result: result.result, // 'saved' | 'paused'
       guardian: g,
       cups: coffee(result.amount),
       todaySaved: todayStats().saved,
@@ -176,10 +179,14 @@ function ExhibitApp({ onExit, recovered = false }) {
     }
   }
 
-  // [영수증 받기]: 미리 만든 영수증을 바로 띄워요 (없으면 그 자리에서 만들기)
+  // [영수증 받기]: 미리 만든 영수증을 바로 띄워요 (없거나 이번 결과와 다르면 그 자리에서 다시 만들기)
   const openReceipt = useCallback(() => {
     if (!s || !result) return
-    setReceipt(receiptReady.current ?? buildReceipt())
+    const ready = receiptReady.current
+    const fresh = ready && ready.scenario === s.id && ready.result === result.result && ready.amount === result.amount
+    const data = fresh ? ready : buildReceipt()
+    if (!fresh) data.url = receiptUrl(data)
+    setReceipt(data)
     setScreen('receipt')
   }, [s, result])
 
@@ -310,7 +317,7 @@ function ExhibitApp({ onExit, recovered = false }) {
       {screen === 'processing' && s && result && (
         <ProcessingScreen
           guardian={result.guardian}
-          held={result.result === 'held'}
+          result={result.result}
           prepare={prepareEnding}
           onDone={() => setScreen('ending')}
         />
@@ -321,8 +328,7 @@ function ExhibitApp({ onExit, recovered = false }) {
         <div className="ex-scene ex-ending-in" style={{ background: 'var(--grey-900)', '--ex-ending-fade': `${ENDING_FADE}s` }}>
           <LevelUp
             solid
-            sub={result.result === 'held' ? '새 요원이 합류했어' : '그래도 3초 멈췄잖아'}
-            title={fill(result.result === 'held' ? s.ending.heldTitle : s.ending.boughtTitle, vars(result.amount))}
+            {...endingText(s.id, result.result, result.amount)}
             guardian={byId(result.guardian)}
             bubble={byId(result.guardian).question}
             caption={result.bonus && s.ending.bonusCaption ? `${s.ending.bonusCaption} · ${s.ending.boardCaption}` : s.ending.boardCaption}

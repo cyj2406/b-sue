@@ -1,4 +1,5 @@
-import { RECEIPT_CHARACTER, RECEIPT_SIGNOFF } from '../exhibit/receiptQuotes'
+import { attractImage } from '../exhibit/attractImages'
+import { RECEIPT_SUBTITLE, RECEIPT_TAIL, RECEIPT_TITLE, receiptQuote, receiptResultLines } from '../exhibit/receiptQuotes'
 import { dateLabel, defenseNo, timeLabel } from '../exhibit/receiptLink'
 import { EX } from '../exhibit/exhibitTokens'
 
@@ -35,13 +36,14 @@ export async function drawReceipt(rc) {
     await Promise.all([f(700, 41, PIXEL), f(700, 22, PIXEL), f(400, 14, MONO), f(400, 13, MONO)]
       .map((font) => document.fonts.load(font, '비상수단 방어 번호 지킨 돈 0123456789')))
   } catch { /* 글꼴이 늦어도 그려요 */ }
-  const pose = await loadImage(RECEIPT_CHARACTER).catch(() => null)
+  const pose = await loadImage(attractImage(rc.pose)).catch(() => null)
+  const res = receiptResultLines(rc) // 결과 줄은 rc.result 만 읽어요
 
   // 줄 목록 (화면 px 기준 높이 · 위 여백)
   const T = { title: [700, 41, PIXEL, C.ink], sub: [400, 13, MONO, C.sub], body: [400, 14, MONO, C.ink], closing: [400, 13, MONO, C.ink], mid: [700, 15, PIXEL, C.ink], big: [700, 22, PIXEL, C.ink] }
   const rows = [
-    { h: 45, style: 'title', center: '비상수단' },
-    { h: 20, style: 'sub', center: '오늘의 소비 기록' },
+    { h: 45, style: 'title', center: RECEIPT_TITLE },
+    { h: 20, style: 'sub', center: RECEIPT_SUBTITLE },
     { h: 22, top: 16, style: 'mid', left: '방어 번호', right: defenseNo(rc.no) },
     { h: 20, style: 'sub', left: dateLabel(rc.date), right: timeLabel(rc.time) },
     { h: 20, top: 16, style: 'sub', left: '수량', left2: '항목', right: '금액' },
@@ -50,14 +52,12 @@ export async function drawReceipt(rc) {
     { h: 20, top: 2, style: 'sub', indent: 36, left: `└ ${rc.guardian.name}` },
     { h: 20, style: 'sub', indent: 44, left: `"${rc.guardian.question}"` },
     { dash: true },
-    rc.held
-      ? { h: 30, top: 2, style: 'big', left: '지킨 돈 :', right: `${won(rc.amount)}원` }
-      : { h: 30, top: 2, style: 'big', left: '쓴 돈 :', right: `${won(rc.amount)}원` },
-    { h: 20, style: rc.held ? 'body' : 'sub', right: rc.held ? `= 커피 ${rc.cups}잔` : '다음엔 결제 전에 다시 살펴보자' },
+    { h: 30, top: 2, style: 'big', left: res.label, right: res.value },
+    { h: 20, style: 'body', right: res.note },
     { dash: true },
     { h: 72, top: 16, image: true },
-    { h: 20, top: 8, style: 'closing', center: `"${RECEIPT_SIGNOFF}"` },
-    { h: 20, top: 8, style: 'sub', center: '결제되지 않은 영수증 · 사기 전에, 딱 3초' },
+    { h: 20, top: 8, style: 'closing', center: `"${receiptQuote(rc.pose)}"` },
+    { h: 20, top: 8, style: 'sub', center: RECEIPT_TAIL },
   ]
   const heightOf = (r) => (r.dash ? 21 : (r.top ?? 0) + r.h) * K
   const paperH = PAD_Y * 2 + rows.reduce((s, r) => s + heightOf(r), 0)

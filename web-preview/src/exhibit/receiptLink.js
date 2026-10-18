@@ -1,15 +1,16 @@
 import { byId } from '../data/guardians'
 import { ATTRACT_LINES } from './attractLines'
 import { receiptBaseUrl } from './config'
+import { resultFromParam, resultToParam } from './result'
 import { SCENARIOS, coffee } from './scenarios'
 
 // ════════════════════════════════════════════════════════════════
 //  영수증 ↔ QR 주소 — 서버 없이 주소 안에 영수증 내용을 담아요 (개인정보 없음)
 //   s 시나리오(a·b·c) · d 날짜(YYMMDD) · t 시간(HHMM) · a 금액 · g 요원 key
-//   r 참았다(h)/샀다(b) · n 오늘 몇 번째 관람객 · w 오늘 관람객이 지킨 돈
+//   r 결과 s(saved 지킴)/p(paused 멈춤) — 예전 QR 의 h/b 도 읽어요 · n 오늘 몇 번째 관람객 · w 오늘 관람객이 지킨 돈
 //   p 영수증 캐릭터 포즈 번호 (attractLines.js 순서 0~8 · 없으면 0)
 //  상품명은 글자 대신 시나리오 코드로 찾아요 (주소가 짧고, 아무 글자나 넣은 가짜 영수증도 막아요)
-//  예: /r?s=a&d=261011&t=0112&a=41700&g=sale&r=h&n=57&w=1284300&p=0
+//  예: /r?s=a&d=261011&t=0112&a=41700&g=sale&r=s&n=57&w=1284300&p=0
 // ════════════════════════════════════════════════════════════════
 
 // 영수증 내용(receipt) → 주소
@@ -20,7 +21,7 @@ export function receiptUrl(rc) {
     t: rc.time.replace(/\D/g, '').slice(0, 4), // 01:12 → 0112
     a: String(rc.amount),
     g: rc.guardian.id,
-    r: rc.held ? 'h' : 'b',
+    r: resultToParam(rc.result),
     n: String(rc.no),
     w: String(rc.todaySaved),
     p: String(Math.max(0, ATTRACT_LINES.findIndex((l) => l.pose === rc.pose))),
@@ -40,10 +41,10 @@ export function receiptFromSearch(search) {
     const amount = int(q.get('a'), 10_000_000)
     const no = int(q.get('n'), 99_999)
     const todaySaved = int(q.get('w'), 1_000_000_000)
-    const r = q.get('r')
+    const result = resultFromParam(q.get('r'))
     const pi = q.has('p') ? int(q.get('p'), ATTRACT_LINES.length - 1) : 0
     if (!sc || !guardian || amount == null || !no || todaySaved == null || pi == null) return null
-    if (!/^\d{6}$/.test(d ?? '') || !/^\d{4}$/.test(t ?? '') || (r !== 'h' && r !== 'b')) return null
+    if (!/^\d{6}$/.test(d ?? '') || !/^\d{4}$/.test(t ?? '') || !result) return null
     const [mm, dd, hh, mi] = [d.slice(2, 4), d.slice(4, 6), t.slice(0, 2), t.slice(2, 4)].map(Number)
     if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || hh > 23 || mi > 59) return null
     return {
@@ -52,7 +53,7 @@ export function receiptFromSearch(search) {
       time: `${t.slice(0, 2)}:${t.slice(2, 4)}`,
       itemName: sc.ending.itemName,
       amount,
-      held: r === 'h',
+      result,
       guardian,
       cups: coffee(amount),
       todaySaved,

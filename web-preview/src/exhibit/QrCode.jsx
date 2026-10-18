@@ -15,7 +15,7 @@ export default function QrCode({ text, size = 120, quiet = 8 }) {
   }, [text])
   if (!svg) return null
   return (
-    <div style={{ width: size + quiet * 2, height: size + quiet * 2, padding: quiet, background: 'var(--white)', borderRadius: 'var(--r-thumb)', flex: 'none', boxSizing: 'border-box' }}>
+    <div data-qr={text} style={{ width: size + quiet * 2, height: size + quiet * 2, padding: quiet, background: 'var(--white)', borderRadius: 'var(--r-thumb)', flex: 'none', boxSizing: 'border-box' }}>
       <div style={{ width: size, height: size }} dangerouslySetInnerHTML={{ __html: svg }} />
     </div>
   )
