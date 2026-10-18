@@ -188,7 +188,7 @@ export default function Baegopa({ s, onPeek, onResult, onBack }) {
             rows={[['메뉴', items], ['배달팁', tip]]}
             total={total}
             onDismiss={() => setPaying(false)}
-            onPay={() => { setPaying(false); setStep('dispatch') }}
+            onPay={() => { setPaying(false); onPeek(null); setStep('dispatch') }} // 출동 화면 위에 빼꼼이 남지 않게
           />
         )}
       </div>

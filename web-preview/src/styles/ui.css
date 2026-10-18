@@ -70,7 +70,7 @@
 .bs-btn-row .bs-btn { flex-basis: 0; min-width: 0; padding-left: 0; padding-right: 0; }
 
 /* 엔딩 · 해금 카드 아래 버튼 묶음 (components/LevelUp.jsx) — 전시에선 exhibit.css 가 아래 여백을 덮어써요 */
-.lvl-cta { position: absolute; left: var(--side); right: var(--side); bottom: 20px; }
+.lvl-cta { flex: none; margin: 0 var(--side) 20px; } /* LevelUp 세로 flex 맨 아래 (하단 고정) */
 
 /* ── 처리 중 표시 1단계: 누른 버튼 안 점 3개 (DESIGN.md '처리 중 표시') ── */
 .bs-btn.is-loading { transform: scale(0.98); pointer-events: none; }

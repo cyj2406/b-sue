@@ -6,6 +6,7 @@ import { Badge, Bubble } from './Kit'
 // ════════════════════════════════════════════════════════════════
 //  엔딩 · 해금 — reference ⑨ (토스 '레벨업' 구조)
 //  짙은 딤 위에: 작은 회색 문구 + 흰 제목 → 요원 카드(말풍선 걸침) → 안내 → 버튼
+//  배치 (2026-10-18): 세로 flex — 헤드라인(상단) · 카드 + 안내(남는 공간 세로 가운데) · 버튼(하단 고정)
 //  요원 카드 그림 = 그 수호신의 미션 그림 · 카드가 나타날 때 0.6초 한 번 반짝 (Burst)
 //  앱 해금 연출(screens/Overlays.jsx)과 전시 엔딩(exhibit/ExhibitApp.jsx)이 같이 써요
 // ════════════════════════════════════════════════════════════════
@@ -15,13 +16,14 @@ export default function LevelUp({ sub, title, guardian, bubble, caption, primary
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 40, fontFamily: 'var(--font)' }}>
       {solid ? <div style={{ position: 'absolute', inset: 0, background: 'var(--grey-900)' }} /> : <div className="bs-dim strong kit-fade" />}
-      <div style={{ position: 'absolute', inset: 0 }}>
-        <div className="kit-fade" style={{ textAlign: 'center', paddingTop: 40 }}>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="kit-fade" style={{ flex: 'none', textAlign: 'center', paddingTop: 40 }}>
           <div className="t-body2" style={{ color: 'var(--grey-400)' }}>{sub}</div>
           <div className="t-title2 c-white" style={{ marginTop: 4 }}>{title}</div>
         </div>
 
-        <div className="kit-rise" style={{ width: 260, margin: '48px auto 0', position: 'relative', animationDelay: '.15s' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '46px 0 24px' }}>
+        <div className="kit-rise" style={{ width: 260, position: 'relative', animationDelay: '.15s' }}>
           {bubble && (
             <div style={{ position: 'absolute', left: 0, right: 0, top: -22, textAlign: 'center', zIndex: 2 }}>
               <Bubble tail="down">{bubble}</Bubble>
@@ -39,6 +41,7 @@ export default function LevelUp({ sub, title, guardian, bubble, caption, primary
         </div>
 
         {caption && <div className="t-caption" style={{ textAlign: 'center', color: 'var(--grey-400)', marginTop: 16 }}>{caption}</div>}
+        </div>
 
         <div className="lvl-cta">
           {autoNextSeconds && (

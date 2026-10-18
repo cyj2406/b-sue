@@ -102,8 +102,10 @@ function ExhibitApp({ onExit, recovered = false }) {
   }
 
   // 빼꼼: 4초 뒤 사라짐, 아무것도 막지 않음
+  // onPeek(null): 떠 있는 빼꼼을 바로 치워요 (출동 화면이 뜰 때)
   const showPeek = (text) => {
     clearTimeout(peekTimer.current)
+    if (!text) { setPeek(null); return }
     setPeek({ text, id: Date.now() })
     peekTimer.current = setTimeout(() => setPeek(null), 4000)
   }

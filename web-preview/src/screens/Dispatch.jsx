@@ -8,6 +8,7 @@ import { usePressOnce } from '../components/PressOnce'
 // 출동 화면 — reference ⑦ 출동 → ⑧ 선택 → 결과 바텀시트
 // ⑦ 0~3초: 버튼 안이 3초 동안 차오름 (누를 수 없음)
 // ⑧ 3초 뒤: 보조 왼쪽 1 [그래도 살래] : 주 버튼 오른쪽 2 [참았다!]
+// 배치 (2026-10-18): 세로 flex — 위 헤드라인(상단) · 카드(남는 공간 세로 가운데) · 버튼(하단 고정)
 // initialStep: 미리보기 주소 ?screen=dispatch&step=held 처럼 특정 단계부터 보기
 // resultSheets: false 면 결과 시트 없이 바로 onFinished (전시 체험은 다음 장면으로 이어져요)
 const plain = (n) => n.toLocaleString('ko-KR')
@@ -40,15 +41,16 @@ export default function Dispatch({ guardian, amount, app, savedThisMonth = 0, on
   const total = savedThisMonth + (amount ?? 0)
 
   return (
-    <div className="kit-fade" style={{ position: 'absolute', inset: 0, background: 'var(--grey-900)', fontFamily: 'var(--font)', zIndex: 30 }}>
+    <div className="kit-fade" style={{ position: 'absolute', inset: 0, background: 'var(--grey-900)', fontFamily: 'var(--font)', zIndex: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       {/* 위: 작은 회색 문구 + 흰 제목 */}
-      <div style={{ textAlign: 'center', paddingTop: 32 }}>
+      <div style={{ flex: 'none', textAlign: 'center', paddingTop: 32 }}>
         <div className="t-body2" style={{ color: 'var(--grey-400)' }}>{pausing ? '잠깐, 딱 3초' : '3초 지났어'}</div>
         <div className="t-title1 c-white" style={{ marginTop: 4 }}>{pausing ? '정말 긁을 거야?' : '이제 골라줘'}</div>
       </div>
 
-      {/* 가운데: 흰 카드 한 장 + 위에 걸친 말풍선 */}
-      <div className="kit-rise" style={{ width: 280, margin: '48px auto 0', position: 'relative' }}>
+      {/* 가운데: 흰 카드 한 장 + 위에 걸친 말풍선 — 헤드라인과 버튼 사이 남는 공간의 세로 가운데 (말풍선 걸침 22 만큼 위 여백) */}
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '46px 0 24px' }}>
+      <div className="kit-rise" style={{ width: 280, position: 'relative' }}>
         <div style={{ position: 'absolute', left: 0, right: 0, top: -22, textAlign: 'center', zIndex: 2 }}>
           <Bubble key={pausing ? 'q' : 'ok'}>{pausing ? guardian.question : '못 참아도 괜찮아'}</Bubble>
         </div>
@@ -71,17 +73,18 @@ export default function Dispatch({ guardian, amount, app, savedThisMonth = 0, on
           )}
         </div>
       </div>
+      </div>
 
-      {/* 아래: ⑦ 차오르는 버튼 → ⑧ 버튼 두 개 */}
+      {/* 아래: ⑦ 차오르는 버튼 → ⑧ 버튼 두 개 (하단 고정 · 흐름 안에 있어서 카드가 버튼과 안 겹쳐요) */}
       {pausing ? (
-        <div style={{ position: 'absolute', left: 'var(--side)', right: 'var(--side)', bottom: BOTTOM, height: 56, borderRadius: 16, background: 'var(--grey-800)', overflow: 'hidden' }}>
+        <div style={{ flex: 'none', position: 'relative', margin: `0 var(--side) ${BOTTOM}`, height: 56, borderRadius: 16, background: 'var(--grey-800)', overflow: 'hidden' }}>
           <div className="kit-fill-3s" style={{ position: 'absolute', inset: 0, background: 'var(--orange-500)' }} />
           <div style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', font: '600 16px var(--font)' }}>
             {count}초만 더 생각해보자
           </div>
         </div>
       ) : (
-        <div style={{ position: 'absolute', left: 'var(--side)', right: 'var(--side)', bottom: BOTTOM }}>
+        <div style={{ flex: 'none', margin: `0 var(--side) ${BOTTOM}` }}>
           {resultSheets ? (
             <ButtonRow secondaryOn="dark" secondary="그래도 살래" onSecondary={() => setStep('bought')} primary="참았다!" onPrimary={hold} />
           ) : (

@@ -87,7 +87,7 @@ export default function ShopFlow({ s, onPeek, onResult, onBack }) {
       rows={[['상품', pay.items], ['배송비', pay.shipping]]}
       total={pay.total}
       onDismiss={() => setPaying(false)}
-      onPay={() => { setPaying(false); setStep('dispatch') }}
+      onPay={() => { setPaying(false); onPeek(null); setStep('dispatch') }} // 출동 화면 위에 빼꼼이 남지 않게
     />
   )
   const dispatchEl = step === 'dispatch' && (
